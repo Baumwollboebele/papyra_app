@@ -17,6 +17,7 @@ abstract final class AppRoutes {
   static const documentPath = '/document/:id';
 
   static const scan = '/scan';
+  static const ingest = '/ingest';
 
   static const settingsCategories = '/settings/categories';
   static const settingsBackup = '/settings/backup';

@@ -361,8 +361,9 @@ class _MetadataCard extends StatelessWidget {
                       color: Theme.of(context).colorScheme.onSecondaryContainer,
                     ),
                     label: Text(detail.group!.name),
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
+                    backgroundColor: Theme.of(
+                      context,
+                    ).colorScheme.secondaryContainer,
                     side: BorderSide.none,
                   ),
               ],

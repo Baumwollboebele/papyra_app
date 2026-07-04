@@ -8,6 +8,7 @@ import 'core/router/app_router.dart';
 import 'core/services/settings_store.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/app_lock_gate.dart';
+import 'features/scan/presentation/share_intent_listener.dart';
 import 'l10n/app_localizations.dart';
 
 Future<void> main() async {
@@ -49,8 +50,9 @@ class PapyraApp extends ConsumerWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('de'),
       routerConfig: router,
-      builder: (context, child) =>
-          AppLockGate(child: child ?? const SizedBox()),
+      builder: (context, child) => ShareIntentListener(
+        child: AppLockGate(child: child ?? const SizedBox()),
+      ),
     );
   }
 }

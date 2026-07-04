@@ -75,6 +75,25 @@ NativeScanner (VisionKit / ML Kit)          -> List<page image paths>
 
 Each external dependency (scanner, OCR) sits behind an interface in `features/scan/data/`, with the plugin implementation injected via a Riverpod provider. Tests use fakes.
 
+### Unified ingest pipeline (all sources funnel through one service)
+
+`features/scan/domain/pipeline/ingest_service.dart` (`IngestService`) is the single funnel for **every** document source — camera scan, Android Share sheet, "Open with", and manual import. Producers build inputs; the service does the rest:
+
+```
+source → IngestItem(s)          (camera: N images = 1 item; shared/imported: 1 item per file)
+  IngestService.buildItems      copy inputs into app storage immediately (URIs may expire);
+                                images → 1 page; PDFs → keep original + rasterize pages
+  IngestService.process         OCR pages → classify → extract → suggest group → draft
+  Confirmation UI               (ScanConfirmationView, reused; queue shows "X von N")
+  IngestService.persist         PDF source: keep the original file (no re-render) + thumbnail;
+                                image source: build searchable PDF; insert document + FTS
+```
+
+- **Camera** flow: `ScanController` produces one `IngestItem` and delegates `process()`/`save()` to `IngestService`.
+- **Share / open-with / import**: `IngestQueueController` builds a *queue* of items and steps through confirm → save; `IngestFlowPage` renders it and reuses `ScanConfirmationView`.
+- **PDF handling & licensing:** no permissively-licensed (MIT/BSD/Apache) Dart package extracts embedded PDF text (Syncfusion/iText are non-permissive → excluded). So the original PDF is **always preserved** (no lossy re-render); a text layer is *detected* via a pure-Dart heuristic (`pdf_text_layer.dart`), and text for classification/search is obtained by rasterizing pages (`PdfRasterizer`, `printing`-backed) + ML Kit OCR — accurate on digital PDFs too.
+- External inputs (scanner, OCR, PDF rasterizer) are all interface-backed with fakes, so the whole funnel is unit-tested without devices.
+
 ### Classification & extraction (the swap point)
 
 `domain/classification/` exposes:

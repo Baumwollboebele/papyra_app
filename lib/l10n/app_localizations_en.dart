@@ -138,6 +138,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanSavedMessage => 'Document saved';
 
   @override
+  String get ingestPreparing => 'Preparing files …';
+
+  @override
+  String ingestProgress(int current, int total) {
+    return 'Document $current of $total';
+  }
+
+  @override
+  String get ingestDoneTitle => 'Import complete';
+
+  @override
+  String ingestDoneSummary(int saved, int skipped) {
+    return '$saved saved · $skipped skipped';
+  }
+
+  @override
+  String get ingestEmpty => 'No supported files found.';
+
+  @override
+  String get importAction => 'Import';
+
+  @override
   String get scanErrorTitle => 'Something went wrong';
 
   @override

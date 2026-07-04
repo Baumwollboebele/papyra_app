@@ -72,6 +72,7 @@ Rules:
 - **Repository pattern.** Presentation talks to repositories via Riverpod providers, never to drift directly.
 - **Immutable models** with `freezed`. No business logic in widgets.
 - **Heavy work off the main thread.** OCR, classification, thumbnailing and PDF generation run via `compute`/isolates with visible progress UI.
+- **One ingest funnel.** Camera, Android Share sheet, "Open with" and manual import all go through `IngestService` (`lib/features/scan/domain/pipeline/`). Don't duplicate the OCR→classify→extract→persist path — extend the service. PDFs keep their original file (no re-render); text comes from rasterize + OCR (see ARCHITECTURE.md).
 - **The classifier + extractors (`lib/features/scan/domain/classification/`) are pure Dart** with no Flutter/plugin imports, so they are unit-testable and later swappable for an LLM-based implementation. Do not add plugin dependencies there.
 
 ## Default categories (stable keys — do not renumber)

@@ -25,8 +25,9 @@ class _FixedOcr implements OcrService {
   @override
   Future<String> recognizePage(String imagePath) async => text;
   @override
-  Future<List<String>> recognizePages(List<String> paths) async =>
-      [for (final _ in paths) text];
+  Future<List<String>> recognizePages(List<String> paths) async => [
+    for (final _ in paths) text,
+  ];
   @override
   Future<void> dispose() async {}
 }
@@ -44,7 +45,8 @@ void main() {
   late IngestService ingest;
   late DocumentRepository docsRepo;
 
-  const invoiceText = 'Stadtwerke München GmbH\nRechnung\nRechnungsnummer 1\n'
+  const invoiceText =
+      'Stadtwerke München GmbH\nRechnung\nRechnungsnummer 1\n'
       'Rechnungsdatum: 12.03.2026\nGesamtbetrag 89,90 €';
 
   setUp(() {
@@ -71,24 +73,25 @@ void main() {
     if (src.existsSync()) src.deleteSync(recursive: true);
   });
 
-  String _writeSrc(String name, List<int> bytes) {
+  String writeSrc(String name, List<int> bytes) {
     final f = File(p.join(src.path, name))..writeAsBytesSync(bytes);
     return f.path;
   }
 
   test('ingests an image file end-to-end (classify + persist)', () async {
-    final path = _writeSrc('scan.png', _png());
-    final items = await ingest.buildItems(
-      [IngestFile(path: path, mimeType: 'image/png', name: 'scan.png')],
-      IngestSource.importFile,
-    );
+    final path = writeSrc('scan.png', _png());
+    final items = await ingest.buildItems([
+      IngestFile(path: path, mimeType: 'image/png', name: 'scan.png'),
+    ], IngestSource.importFile);
     expect(items, hasLength(1));
 
     final processed = await ingest.process(items.first);
     expect(processed.status, IngestStatus.ready);
     expect(processed.draft, isNotNull);
     // Classified as an invoice, sender + amount extracted.
-    final cat = await CategoryRepository(db).getById(processed.draft!.categoryId);
+    final cat = await CategoryRepository(
+      db,
+    ).getById(processed.draft!.categoryId);
     expect(cat.key, CategoryKeys.rechnungen);
     expect(processed.draft!.amountCents, 8990);
 
@@ -99,36 +102,36 @@ void main() {
     expect(detail.document.ocrText, contains('Stadtwerke'));
   });
 
-  test('ingests a PDF file and preserves the original PDF (no re-render)',
-      () async {
-    // Minimal bytes that pass the %PDF header + /Font checks.
-    final pdfBytes = Uint8List.fromList('%PDF-1.7\n/Font\n...'.codeUnits);
-    final path = _writeSrc('doc.pdf', pdfBytes);
+  test(
+    'ingests a PDF file and preserves the original PDF (no re-render)',
+    () async {
+      // Minimal bytes that pass the %PDF header + /Font checks.
+      final pdfBytes = Uint8List.fromList('%PDF-1.7\n/Font\n...'.codeUnits);
+      final path = writeSrc('doc.pdf', pdfBytes);
 
-    final items = await ingest.buildItems(
-      [IngestFile(path: path, mimeType: 'application/pdf', name: 'doc.pdf')],
-      IngestSource.share,
-    );
-    expect(items, hasLength(1));
-    final item = items.first;
-    expect(item.isPdf, isTrue);
-    expect(item.originalPdfPath, isNotNull);
-    expect(item.pageImagePaths, hasLength(1)); // rasterized by the fake
+      final items = await ingest.buildItems([
+        IngestFile(path: path, mimeType: 'application/pdf', name: 'doc.pdf'),
+      ], IngestSource.share);
+      expect(items, hasLength(1));
+      final item = items.first;
+      expect(item.isPdf, isTrue);
+      expect(item.originalPdfPath, isNotNull);
+      expect(item.pageImagePaths, hasLength(1)); // rasterized by the fake
 
-    final processed = await ingest.process(item);
-    final id = await ingest.persist(processed, processed.draft!);
-    final detail = await docsRepo.getDetail(id);
-    // The stored PDF is the imported original (kept), and its bytes are intact.
-    expect(detail!.document.pdfPath, item.originalPdfPath);
-    expect(File(detail.document.pdfPath).readAsBytesSync(), pdfBytes);
-  });
+      final processed = await ingest.process(item);
+      final id = await ingest.persist(processed, processed.draft!);
+      final detail = await docsRepo.getDetail(id);
+      // The stored PDF is the imported original (kept), and its bytes are intact.
+      expect(detail!.document.pdfPath, item.originalPdfPath);
+      expect(File(detail.document.pdfPath).readAsBytesSync(), pdfBytes);
+    },
+  );
 
   test('unsupported file becomes a failed item, not a crash', () async {
-    final path = _writeSrc('note.txt', 'hello'.codeUnits);
-    final items = await ingest.buildItems(
-      [IngestFile(path: path, mimeType: 'text/plain', name: 'note.txt')],
-      IngestSource.share,
-    );
+    final path = writeSrc('note.txt', 'hello'.codeUnits);
+    final items = await ingest.buildItems([
+      IngestFile(path: path, mimeType: 'text/plain', name: 'note.txt'),
+    ], IngestSource.share);
     expect(items.single.status, IngestStatus.failed);
     expect(items.single.errorMessage, isNotNull);
   });

@@ -344,6 +344,42 @@ abstract class AppLocalizations {
   /// **'Dokument gespeichert'**
   String get scanSavedMessage;
 
+  /// No description provided for @ingestPreparing.
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien werden vorbereitet …'**
+  String get ingestPreparing;
+
+  /// No description provided for @ingestProgress.
+  ///
+  /// In de, this message translates to:
+  /// **'Dokument {current} von {total}'**
+  String ingestProgress(int current, int total);
+
+  /// No description provided for @ingestDoneTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Import abgeschlossen'**
+  String get ingestDoneTitle;
+
+  /// No description provided for @ingestDoneSummary.
+  ///
+  /// In de, this message translates to:
+  /// **'{saved} gespeichert · {skipped} übersprungen'**
+  String ingestDoneSummary(int saved, int skipped);
+
+  /// No description provided for @ingestEmpty.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine unterstützten Dateien gefunden.'**
+  String get ingestEmpty;
+
+  /// No description provided for @importAction.
+  ///
+  /// In de, this message translates to:
+  /// **'Importieren'**
+  String get importAction;
+
   /// No description provided for @scanErrorTitle.
   ///
   /// In de, this message translates to:

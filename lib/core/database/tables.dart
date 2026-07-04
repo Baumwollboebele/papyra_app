@@ -33,8 +33,11 @@ class Documents extends Table {
       integer().references(Categories, #id, onDelete: KeyAction.restrict)();
 
   /// Optional sub-group within the category.
-  IntColumn get groupId =>
-      integer().nullable().references(Groups, #id, onDelete: KeyAction.setNull)();
+  IntColumn get groupId => integer().nullable().references(
+    Groups,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
   TextColumn get sender => text().nullable()();
   DateTimeColumn get documentDate => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();

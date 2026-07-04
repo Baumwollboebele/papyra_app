@@ -6,6 +6,7 @@ import '../../features/library/presentation/category_page.dart';
 import '../../features/library/presentation/document_detail_page.dart';
 import '../../features/library/presentation/library_home_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
+import '../../features/scan/presentation/ingest_flow_page.dart';
 import '../../features/scan/presentation/scan_flow_page.dart';
 import '../../features/search/presentation/search_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
@@ -89,6 +90,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.scan,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const ScanFlowPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.ingest,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) =>
+            IngestFlowPage(request: state.extra! as IngestRequest),
       ),
     ],
     errorBuilder: (context, state) =>

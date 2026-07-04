@@ -39,7 +39,8 @@ bool _containsAsciiWithin(Uint8List haystack, Uint8List needle, int limit) =>
 
 int _indexOf(Uint8List haystack, Uint8List needle, int limit) {
   if (needle.isEmpty) return 0;
-  final end = (limit < haystack.length ? limit : haystack.length) - needle.length;
+  final end =
+      (limit < haystack.length ? limit : haystack.length) - needle.length;
   for (var i = 0; i <= end; i++) {
     var match = true;
     for (var j = 0; j < needle.length; j++) {

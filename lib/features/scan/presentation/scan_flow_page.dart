@@ -54,7 +54,14 @@ class _ScanFlowPageState extends ConsumerState<ScanFlowPage> {
       case ScanPhase.review:
         return const ScanReviewView();
       case ScanPhase.confirm:
-        return ScanConfirmationView(draft: state.draft!);
+        return ScanConfirmationView(
+          draft: state.draft!,
+          onConfirm: (draft) {
+            final controller = ref.read(scanControllerProvider.notifier);
+            controller.updateDraft(draft);
+            controller.save();
+          },
+        );
       case ScanPhase.error:
         return _ErrorView(message: state.errorMessage ?? l10n.scanErrorTitle);
       case ScanPhase.capturing:

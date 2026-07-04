@@ -131,7 +131,11 @@ class _GroupTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.folder_outlined, size: 12, color: scheme.onSecondaryContainer),
+          Icon(
+            Icons.folder_outlined,
+            size: 12,
+            color: scheme.onSecondaryContainer,
+          ),
           const SizedBox(width: 4),
           Text(
             name,

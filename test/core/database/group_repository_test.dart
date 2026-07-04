@@ -70,9 +70,7 @@ void main() {
     await insert(categoryId: vertraege, groupId: strom, title: 'inGroup');
     await insert(categoryId: vertraege, title: 'noGroup');
 
-    final inGroup = await docs
-        .watchByCategory(vertraege, groupId: strom)
-        .first;
+    final inGroup = await docs.watchByCategory(vertraege, groupId: strom).first;
     expect(inGroup.map((d) => d.title), ['inGroup']);
 
     final ungrouped = await docs
@@ -113,16 +111,18 @@ void main() {
     });
   });
 
-  test('deleting a group ungroups its documents (keeps the documents)',
-      () async {
-    final strom = await groups.getOrCreate(vertraege, 'Strom');
-    final id = await insert(categoryId: vertraege, groupId: strom);
-    await groups.delete(strom);
-    final detail = await docs.getDetail(id);
-    expect(detail, isNotNull);
-    expect(detail!.document.groupId, isNull);
-    expect(detail.group, isNull);
-  });
+  test(
+    'deleting a group ungroups its documents (keeps the documents)',
+    () async {
+      final strom = await groups.getOrCreate(vertraege, 'Strom');
+      final id = await insert(categoryId: vertraege, groupId: strom);
+      await groups.delete(strom);
+      final detail = await docs.getDetail(id);
+      expect(detail, isNotNull);
+      expect(detail!.document.groupId, isNull);
+      expect(detail.group, isNull);
+    },
+  );
 
   test('moving to another category clears the group', () async {
     final strom = await groups.getOrCreate(vertraege, 'Strom');

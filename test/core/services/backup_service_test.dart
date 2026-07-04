@@ -62,9 +62,7 @@ void main() {
       4,
     ]);
     expect(
-      File(
-        p.join(docs.path, 'papyra', 'pages', 'a.jpg'),
-      ).readAsStringSync(),
+      File(p.join(docs.path, 'papyra', 'pages', 'a.jpg')).readAsStringSync(),
       'content-pages/a.jpg',
     );
     expect(

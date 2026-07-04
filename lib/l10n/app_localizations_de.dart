@@ -138,6 +138,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get scanSavedMessage => 'Dokument gespeichert';
 
   @override
+  String get ingestPreparing => 'Dateien werden vorbereitet …';
+
+  @override
+  String ingestProgress(int current, int total) {
+    return 'Dokument $current von $total';
+  }
+
+  @override
+  String get ingestDoneTitle => 'Import abgeschlossen';
+
+  @override
+  String ingestDoneSummary(int saved, int skipped) {
+    return '$saved gespeichert · $skipped übersprungen';
+  }
+
+  @override
+  String get ingestEmpty => 'Keine unterstützten Dateien gefunden.';
+
+  @override
+  String get importAction => 'Importieren';
+
+  @override
   String get scanErrorTitle => 'Etwas ist schiefgelaufen';
 
   @override

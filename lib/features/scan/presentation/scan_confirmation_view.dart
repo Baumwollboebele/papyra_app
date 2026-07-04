@@ -8,13 +8,28 @@ import '../../../core/providers/database_providers.dart';
 import '../../../core/widgets/group_picker.dart';
 import '../../../core/widgets/tag_editor.dart';
 import '../domain/pipeline/scan_models.dart';
-import 'scan_controller.dart';
 
-/// Editable confirmation of the extracted metadata before saving.
+/// Editable confirmation of the extracted metadata before saving. Reused by the
+/// camera scan flow and the share/import ingest queue via [onConfirm].
 class ScanConfirmationView extends ConsumerStatefulWidget {
-  const ScanConfirmationView({required this.draft, super.key});
+  const ScanConfirmationView({
+    required this.draft,
+    required this.onConfirm,
+    this.progressLabel,
+    this.onSkip,
+    super.key,
+  });
 
   final ConfirmationDraft draft;
+
+  /// Called with the edited draft when the user taps save.
+  final void Function(ConfirmationDraft draft) onConfirm;
+
+  /// Optional "2 von 3" label shown in the app bar for multi-item queues.
+  final String? progressLabel;
+
+  /// When provided, shows a "skip this document" action (used by the queue).
+  final VoidCallback? onSkip;
 
   @override
   ConsumerState<ScanConfirmationView> createState() =>
@@ -80,8 +95,7 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
   }
 
   void _save() {
-    final controller = ref.read(scanControllerProvider.notifier);
-    controller.updateDraft(
+    widget.onConfirm(
       widget.draft.copyWith(
         title: _title.text.trim().isEmpty ? 'Dokument' : _title.text.trim(),
         categoryId: _categoryId,
@@ -92,7 +106,6 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
         groupId: _groupId,
       ),
     );
-    controller.save();
   }
 
   @override
@@ -101,7 +114,25 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
     final categoriesAsync = ref.watch(categoriesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.scanConfirmTitle)),
+      appBar: AppBar(
+        title: Text(l10n.scanConfirmTitle),
+        actions: [
+          if (widget.onSkip != null)
+            TextButton(onPressed: widget.onSkip, child: Text(l10n.commonSkip)),
+        ],
+        bottom: widget.progressLabel == null
+            ? null
+            : PreferredSize(
+                preferredSize: const Size.fromHeight(24),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    widget.progressLabel!,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ),
+      ),
       body: categoriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (_, _) => Center(child: Text(l10n.scanErrorTitle)),

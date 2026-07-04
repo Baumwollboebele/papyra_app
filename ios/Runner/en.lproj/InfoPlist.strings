@@ -1,0 +1,3 @@
+"CFBundleDisplayName" = "PaperVault";
+"NSCameraUsageDescription" = "PaperVault uses the camera to scan your documents. The captures stay entirely on your device.";
+"NSFaceIDUsageDescription" = "PaperVault uses Face ID to protect your documents with the app lock.";

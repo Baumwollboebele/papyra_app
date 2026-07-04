@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../classification/models.dart';
+import 'ingest_models.dart';
 
 /// A single captured page inside the scan flow.
 @immutable
@@ -106,6 +107,7 @@ class ScanState {
     this.pages = const [],
     this.classification,
     this.draft,
+    this.item,
     this.errorMessage,
     this.savedDocumentId,
     this.progressLabel,
@@ -115,6 +117,9 @@ class ScanState {
   final List<ScanPage> pages;
   final ClassificationResult? classification;
   final ConfirmationDraft? draft;
+
+  /// The processed ingest item (carries page OCR text) used when saving.
+  final IngestItem? item;
   final String? errorMessage;
   final int? savedDocumentId;
   final String? progressLabel;
@@ -124,6 +129,7 @@ class ScanState {
     List<ScanPage>? pages,
     ClassificationResult? classification,
     ConfirmationDraft? draft,
+    IngestItem? item,
     String? errorMessage,
     int? savedDocumentId,
     String? progressLabel,
@@ -133,6 +139,7 @@ class ScanState {
       pages: pages ?? this.pages,
       classification: classification ?? this.classification,
       draft: draft ?? this.draft,
+      item: item ?? this.item,
       errorMessage: errorMessage,
       savedDocumentId: savedDocumentId ?? this.savedDocumentId,
       progressLabel: progressLabel,

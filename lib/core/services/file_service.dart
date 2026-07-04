@@ -19,12 +19,18 @@ class StorageException implements Exception {
 /// Owns the app's private, on-device file storage: scanned page images, thumbnails
 /// and generated PDFs. Nothing here touches the network.
 class FileService {
+  /// [documentsDirectory] defaults to path_provider; tests inject a temp dir.
+  FileService({Future<Directory> Function()? documentsDirectory})
+    : _docsDir = documentsDirectory ?? getApplicationDocumentsDirectory;
+
+  final Future<Directory> Function() _docsDir;
+
   static const _pagesDir = 'pages';
   static const _thumbsDir = 'thumbnails';
   static const _pdfsDir = 'pdfs';
 
   Future<Directory> _dir(String sub) async {
-    final base = await getApplicationDocumentsDirectory();
+    final base = await _docsDir();
     final dir = Directory(p.join(base.path, 'papyra', sub));
     if (!dir.existsSync()) {
       await dir.create(recursive: true);
@@ -52,6 +58,23 @@ class FileService {
   Future<String> writePdf(Uint8List bytes) => _write(_pdfsDir, bytes, '.pdf');
   Future<String> writeThumbnail(Uint8List bytes) =>
       _write(_thumbsDir, bytes, '.jpg');
+
+  /// Writes a rasterized/derived page image into persistent storage.
+  Future<String> writePageImage(Uint8List bytes) =>
+      _write(_pagesDir, bytes, '.jpg');
+
+  /// Copies an externally shared/imported PDF into persistent storage, keeping
+  /// the original bytes untouched (no re-render).
+  Future<String> importPdf(String sourcePath) async {
+    try {
+      final dir = await _dir(_pdfsDir);
+      final dest = p.join(dir.path, '${uniqueId()}.pdf');
+      await File(sourcePath).copy(dest);
+      return dest;
+    } on FileSystemException catch (e) {
+      throw StorageException(e.message);
+    }
+  }
 
   Future<String> _write(String sub, Uint8List bytes, String ext) async {
     try {

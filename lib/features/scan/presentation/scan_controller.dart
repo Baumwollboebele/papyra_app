@@ -1,26 +1,19 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/database/repositories/document_repository.dart';
-import '../../../core/database/default_categories.dart';
-import '../../../core/providers/classification_providers.dart';
-import '../../../core/providers/database_providers.dart';
+import '../../../core/providers/ingest_providers.dart';
 import '../../../core/services/file_service.dart';
-import '../../../core/services/ocr_service.dart';
-import '../../../core/services/pdf_service.dart';
 import '../../../core/services/scanner_service.dart';
-import '../../../core/services/thumbnail_service.dart';
 import '../domain/pipeline/scan_models.dart';
-import '../domain/pipeline/scan_processing.dart';
 
 final scanControllerProvider = NotifierProvider<ScanController, ScanState>(
   ScanController.new,
 );
 
-/// Drives the scan flow: capture → review → OCR/classify/extract → confirm →
-/// save. Heavy work (OCR, thumbnail, PDF) runs off the UI isolate. Every failure
-/// path resolves to [ScanPhase.error] with a German message — never a crash.
+/// Drives the camera scan flow: capture → review → process → confirm → save.
+/// The actual OCR/classify/persist work lives in the shared [IngestService]
+/// (see ingestServiceProvider), so camera, share and import all use one
+/// pipeline. Every failure path resolves to [ScanPhase.error] with a German
+/// message — never a crash.
 class ScanController extends Notifier<ScanState> {
   @override
   ScanState build() => const ScanState();
@@ -39,8 +32,7 @@ class ScanController extends Notifier<ScanState> {
       final fileService = ref.read(fileServiceProvider);
       final pages = <ScanPage>[];
       for (final path in paths) {
-        final stored = await fileService.importPage(path);
-        pages.add(ScanPage(imagePath: stored));
+        pages.add(ScanPage(imagePath: await fileService.importPage(path)));
       }
       state = ScanState(phase: ScanPhase.review, pages: pages);
     } on StorageException catch (e) {
@@ -86,159 +78,51 @@ class ScanController extends Notifier<ScanState> {
     state = state.copyWith(pages: pages);
   }
 
-  /// Runs OCR then classification/extraction, producing the confirmation draft.
+  /// Runs OCR + classification + extraction via the shared ingest service.
   Future<void> process() async {
     if (state.pages.isEmpty) return;
     state = state.copyWith(
       phase: ScanPhase.processing,
       progressLabel: 'Text wird erkannt …',
     );
-    try {
-      final ocr = ref.read(ocrServiceProvider);
-      final texts = await ocr.recognizePages(
-        state.pages.map((p) => p.imagePath).toList(),
-      );
-      final pages = [
-        for (var i = 0; i < state.pages.length; i++)
-          state.pages[i].copyWith(text: texts[i]),
-      ];
-      final combined = texts.where((t) => t.trim().isNotEmpty).join('\n\n');
-
-      final categories = await ref.read(categoryRepositoryProvider).getAll();
-      final idByKey = {for (final c in categories) c.key: c.id};
-      final fallbackId = idByKey[CategoryKeys.sonstiges] ?? categories.first.id;
-
-      final result = buildProcessingResult(
-        combinedText: combined,
-        classifier: ref.read(documentClassifierProvider),
-        extractor: ref.read(metadataExtractorProvider),
-        categoryIdByKey: idByKey,
-        fallbackCategoryId: fallbackId,
-      );
-
-      // Auto-file: if the sender already lives in a group of this category,
-      // pre-select that group.
-      final suggestedGroupId = await ref
-          .read(groupRepositoryProvider)
-          .suggestGroupId(result.draft.categoryId, result.draft.sender);
-
-      state = state.copyWith(
-        phase: ScanPhase.confirm,
-        pages: pages,
-        classification: result.classification,
-        draft: result.draft.copyWith(groupId: suggestedGroupId),
-      );
-    } catch (_) {
-      // OCR failed: still let the user save with empty text.
-      final categories = await ref.read(categoryRepositoryProvider).getAll();
-      final fallbackId = categories
-          .firstWhere(
-            (c) => c.key == CategoryKeys.sonstiges,
-            orElse: () => categories.first,
-          )
-          .id;
-      state = state.copyWith(
-        phase: ScanPhase.confirm,
-        draft: ConfirmationDraft(
-          title: 'Dokument',
-          categoryId: fallbackId,
-          suggestedCategoryId: fallbackId,
-          confidence: 0,
-          lowConfidence: true,
-        ),
-      );
-    }
+    final ingest = ref.read(ingestServiceProvider);
+    final item = ingest.cameraItem(
+      state.pages.map((p) => p.imagePath).toList(),
+    );
+    final processed = await ingest.process(item);
+    state = state.copyWith(
+      phase: ScanPhase.confirm,
+      item: processed,
+      classification: processed.classification,
+      draft: processed.draft,
+    );
   }
 
   void updateDraft(ConfirmationDraft draft) {
     state = state.copyWith(draft: draft);
   }
 
-  /// Generates the searchable PDF + thumbnail and persists the document.
+  /// Persists the confirmed document via the shared ingest service.
   Future<void> save() async {
     final draft = state.draft;
-    if (draft == null || state.pages.isEmpty) return;
+    final item = state.item;
+    if (draft == null || item == null || state.pages.isEmpty) return;
 
     state = state.copyWith(
       phase: ScanPhase.saving,
-      progressLabel: 'PDF wird erstellt …',
+      progressLabel: 'Wird gespeichert …',
     );
-    final fileService = ref.read(fileServiceProvider);
-    final written = <String>[];
     try {
-      final pageBytes = <Uint8List>[];
-      for (final page in state.pages) {
-        pageBytes.add(await fileService.readBytes(page.imagePath));
-      }
-
-      final pdfBytes = await compute(
-        buildSearchablePdf,
-        PdfBuildRequest(
-          title: draft.title,
-          fontData: await _loadTextLayerFont(),
-          pages: [
-            for (var i = 0; i < state.pages.length; i++)
-              PdfPageInput(imageBytes: pageBytes[i], text: state.pages[i].text),
-          ],
-        ),
-      );
-      final pdfPath = await fileService.writePdf(pdfBytes);
-      written.add(pdfPath);
-
-      final thumbBytes = await compute(
-        generateThumbnailBytes,
-        ThumbnailRequest(pageBytes.first),
-      );
-      final thumbPath = await fileService.writeThumbnail(thumbBytes);
-      written.add(thumbPath);
-
-      final ocrText = state.pages.map((p) => p.text).join('\n\n');
-      final id = await ref
-          .read(documentRepositoryProvider)
-          .insertDocument(
-            DocumentDraft(
-              title: draft.title,
-              categoryId: draft.categoryId,
-              pdfPath: pdfPath,
-              pageImagePaths: state.pages.map((p) => p.imagePath).toList(),
-              thumbnailPath: thumbPath,
-              sender: draft.sender,
-              documentDate: draft.documentDate,
-              amountCents: draft.amountCents,
-              currency: draft.currency,
-              ocrText: ocrText,
-              tags: draft.tags,
-              groupId: draft.groupId,
-            ),
-          );
-
+      final id = await ref.read(ingestServiceProvider).persist(item, draft);
       state = state.copyWith(phase: ScanPhase.saved, savedDocumentId: id);
     } on StorageException catch (e) {
-      await fileService.deleteAll(written);
       _fail('Nicht genügend Speicherplatz oder Schreibfehler: ${e.message}');
     } catch (_) {
-      await fileService.deleteAll(written);
       _fail('Das Dokument konnte nicht gespeichert werden.');
     }
   }
 
   void _fail(String message) {
     state = state.copyWith(phase: ScanPhase.error, errorMessage: message);
-  }
-
-  Uint8List? _cachedFont;
-
-  /// Loads the bundled Inter font (once) for the PDF's invisible text layer, so
-  /// German umlauts survive in the searchable layer. Best-effort: null on any
-  /// failure, in which case the PDF uses the built-in Latin-1 font.
-  Future<Uint8List?> _loadTextLayerFont() async {
-    if (_cachedFont != null) return _cachedFont;
-    try {
-      final data = await rootBundle.load('assets/fonts/Inter-Variable.ttf');
-      _cachedFont = data.buffer.asUint8List();
-    } catch (_) {
-      _cachedFont = null;
-    }
-    return _cachedFont;
   }
 }

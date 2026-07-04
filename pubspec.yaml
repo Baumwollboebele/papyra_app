@@ -55,6 +55,7 @@ dependencies:
   google_mlkit_text_recognition: ^0.15.1
   intl: any
   file_selector: ^1.1.0
+  receive_sharing_intent: ^1.9.0
 
 dev_dependencies:
   flutter_test:

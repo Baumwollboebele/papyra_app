@@ -18,9 +18,9 @@ void main() {
     );
 
     // Seed a fake database file and media files.
-    File(p.join(docs.path, 'papervault.sqlite')).writeAsBytesSync([1, 2, 3, 4]);
+    File(p.join(docs.path, 'papyra.sqlite')).writeAsBytesSync([1, 2, 3, 4]);
     for (final rel in ['pages/a.jpg', 'thumbnails/a.jpg', 'pdfs/a.pdf']) {
-      final f = File(p.join(docs.path, 'papervault', rel));
+      final f = File(p.join(docs.path, 'papyra', rel));
       f.parent.createSync(recursive: true);
       f.writeAsStringSync('content-$rel');
     }
@@ -45,8 +45,8 @@ void main() {
     final zipPath = await service.createBackup();
 
     // Simulate data loss.
-    Directory(p.join(docs.path, 'papervault')).deleteSync(recursive: true);
-    File(p.join(docs.path, 'papervault.sqlite')).deleteSync();
+    Directory(p.join(docs.path, 'papyra')).deleteSync(recursive: true);
+    File(p.join(docs.path, 'papyra.sqlite')).deleteSync();
 
     var closed = false;
     await service.restoreBackup(
@@ -55,7 +55,7 @@ void main() {
     );
 
     expect(closed, isTrue);
-    expect(File(p.join(docs.path, 'papervault.sqlite')).readAsBytesSync(), [
+    expect(File(p.join(docs.path, 'papyra.sqlite')).readAsBytesSync(), [
       1,
       2,
       3,
@@ -63,12 +63,12 @@ void main() {
     ]);
     expect(
       File(
-        p.join(docs.path, 'papervault', 'pages', 'a.jpg'),
+        p.join(docs.path, 'papyra', 'pages', 'a.jpg'),
       ).readAsStringSync(),
       'content-pages/a.jpg',
     );
     expect(
-      File(p.join(docs.path, 'papervault', 'pdfs', 'a.pdf')).existsSync(),
+      File(p.join(docs.path, 'papyra', 'pdfs', 'a.pdf')).existsSync(),
       isTrue,
     );
   });

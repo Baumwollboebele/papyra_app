@@ -1,8 +1,8 @@
-# PaperVault
+# Papyra
 
 **Deine Dokumente verlassen nie dein Gerät.**
 
-PaperVault is a **100% offline, local-first** Flutter app for the German market. Scan your paper mail (invoices, payslips, tax letters, contracts, insurance), and PaperVault OCRs it on-device, automatically classifies and files it into smart categories, and makes everything full-text searchable — with no backend, no accounts, no analytics, and no network calls at all.
+Papyra is a **100% offline, local-first** Flutter app for the German market. Scan your paper mail (invoices, payslips, tax letters, contracts, insurance), and Papyra OCRs it on-device, automatically classifies and files it into smart categories, and makes everything full-text searchable — with no backend, no accounts, no analytics, and no network calls at all.
 
 > Working title. The name is easy to change — see [Renaming](#renaming).
 
@@ -96,7 +96,7 @@ flutter build apk --release         # sideload / testing
 
 Before publishing:
 
-1. Set a real `applicationId` in `android/app/build.gradle.kts` (placeholder: `de.example.papervault`).
+1. Set a real `applicationId` in `android/app/build.gradle.kts` (placeholder: `de.example.papyra`).
 2. Configure a release signing config (currently signs with debug keys so `--release` runs locally). See [Flutter: Android signing](https://docs.flutter.dev/deployment/android#signing-the-app).
 3. Confirm the merged manifest has **no `INTERNET` permission**: build the APK then inspect `build/app/outputs/…/AndroidManifest.xml`, or run `aapt dump permissions`.
 
@@ -108,7 +108,7 @@ flutter build ipa --release
 
 One-time Xcode setup (some steps can't be scripted from Windows):
 
-1. Open `ios/Runner.xcworkspace`. Set the **Bundle Identifier** (placeholder `de.example.papervault`) and your signing team.
+1. Open `ios/Runner.xcworkspace`. Set the **Bundle Identifier** (placeholder `de.example.papyra`) and your signing team.
 2. Add `ios/Runner/PrivacyInfo.xcprivacy` to the **Runner** target (Build Phases → Copy Bundle Resources) if not already included.
 3. Set **Code Signing Entitlements** to `Runner/Runner.entitlements` (enables `NSFileProtectionComplete` at-rest encryption).
 4. Verify the localized `InfoPlist.strings` (`ios/Runner/de.lproj`, `en.lproj`) are part of the target so the camera/Face ID prompts are German + English.
@@ -136,10 +136,10 @@ A backup is a single **ZIP** (share it anywhere you like — it never leaves the
 
 ```
 manifest.json              { app, format, schemaVersion, createdAt, baseDir }
-papervault.sqlite          the SQLite database (documents, categories, tags, FTS)
-files/papervault/pages/…       scanned page images
-files/papervault/thumbnails/…  thumbnails
-files/papervault/pdfs/…        generated PDFs
+papyra.sqlite          the SQLite database (documents, categories, tags, FTS)
+files/papyra/pages/…       scanned page images
+files/papyra/thumbnails/…  thumbnails
+files/papyra/pdfs/…        generated PDFs
 ```
 
 - `format` is the backup format version (currently `1`); `baseDir` records the original absolute media directory.
@@ -150,7 +150,7 @@ files/papervault/pdfs/…        generated PDFs
 
 ## Renaming
 
-"PaperVault" is a working title. To rename:
+"Papyra" is a working title. To rename:
 
 1. **App id:** `android/app/build.gradle.kts` (`applicationId`) and the iOS Bundle Identifier in Xcode.
 2. **Display name:** `android/app/src/main/AndroidManifest.xml` (`android:label`) and `ios/Runner/Info.plist` (`CFBundleDisplayName` + the `InfoPlist.strings`).

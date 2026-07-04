@@ -6,13 +6,13 @@ import 'tables.dart';
 
 part 'app_database.g.dart';
 
-/// The single SQLite database for PaperVault.
+/// The single SQLite database for Papyra.
 ///
 /// Full-text search uses an FTS5 virtual table (`documents_fts`) that is kept
 /// in sync from the repository layer (see DocumentRepository). Categories are
 /// seeded on first open.
 @DriftDatabase(
-  tables: [Categories, Documents, DocumentPages, Tags, DocumentTags],
+  tables: [Categories, Groups, Documents, DocumentPages, Tags, DocumentTags],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openAppConnection());
@@ -21,7 +21,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -29,6 +29,13 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
       await _createFtsTable();
       await _seedCategories();
+    },
+    onUpgrade: (m, from, to) async {
+      // v2: sub-groups within categories.
+      if (from < 2) {
+        await m.createTable(groups);
+        await m.addColumn(documents, documents.groupId);
+      }
     },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');

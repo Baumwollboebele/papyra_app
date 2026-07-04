@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- PaperVault is 100% offline. Explicitly remove the INTERNET permission
+    <!-- Papyra is 100% offline. Explicitly remove the INTERNET permission
          even if a dependency declares it: the app makes no network calls, and
          this is the technical proof of the privacy promise. -->
     <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
@@ -11,7 +11,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
-        android:label="PaperVault"
+        android:label="Papyra"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

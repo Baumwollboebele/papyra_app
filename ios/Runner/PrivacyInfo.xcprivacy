@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- PaperVault does not track users and collects no data. Everything stays
+	<!-- Papyra does not track users and collects no data. Everything stays
 	     on device. -->
 	<key>NSPrivacyTracking</key>
 	<false/>

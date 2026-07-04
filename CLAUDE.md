@@ -1,10 +1,10 @@
-# CLAUDE.md — PaperVault
+# CLAUDE.md — Papyra
 
 Project conventions, common commands, and an architecture summary for anyone (human or AI) working in this repo.
 
 ## What this is
 
-**PaperVault** (working title — see "Renaming" below) is a **100% offline, local-first** Flutter app for the German market. Users scan paper mail (invoices, payslips, tax letters, contracts, insurance), the app OCRs it on-device, classifies and files it into smart categories, and makes everything full-text searchable. No backend, no accounts, no analytics, no runtime network calls. Privacy ("Deine Dokumente verlassen nie dein Gerät") is the core value proposition (DSGVO/GDPR).
+**Papyra** (working title — see "Renaming" below) is a **100% offline, local-first** Flutter app for the German market. Users scan paper mail (invoices, payslips, tax letters, contracts, insurance), the app OCRs it on-device, classifies and files it into smart categories, and makes everything full-text searchable. No backend, no accounts, no analytics, no runtime network calls. Privacy ("Deine Dokumente verlassen nie dein Gerät") is the core value proposition (DSGVO/GDPR).
 
 ## Non-negotiable constraints
 
@@ -81,13 +81,13 @@ The seeded row `sonstiges` is the fallback for low-confidence classification.
 
 ## Platform notes
 
-- **App id:** `de.example.papervault` (placeholder — see "Renaming").
+- **App id:** `de.example.papyra` (placeholder — see "Renaming").
 - **iOS:** requires `NSCameraUsageDescription` + `NSFaceIDUsageDescription` (de/en), `PrivacyInfo.xcprivacy`, file protection. iOS **cannot be compiled on Windows** — verify on macOS.
 - **Android:** camera permission with rationale; **no `INTERNET` permission** (proves the offline claim). minSdk is driven by the ML Kit / scanner plugins — see README.
 
 ## Renaming
 
-The name "PaperVault" is a working title. To rename:
+The name "Papyra" is a working title. To rename:
 
 1. App id: `flutter pub run change_app_package_name:main <new.id>` or edit `android/app/build.gradle.kts` (`applicationId`) and the iOS bundle id in Xcode.
 2. Display name: `android/app/src/main/AndroidManifest.xml` (`android:label`) and `ios/Runner/Info.plist` (`CFBundleDisplayName`).

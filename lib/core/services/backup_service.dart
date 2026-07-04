@@ -21,10 +21,10 @@ class BackupException implements Exception {
 /// Backup layout (documented in README):
 /// ```
 /// manifest.json            { format, app, schemaVersion, createdAt, baseDir }
-/// papervault.sqlite        the SQLite database
-/// files/papervault/pages/… scanned page images
-/// files/papervault/thumbnails/…
-/// files/papervault/pdfs/…  generated PDFs
+/// papyra.sqlite        the SQLite database
+/// files/papyra/pages/… scanned page images
+/// files/papyra/thumbnails/…
+/// files/papyra/pdfs/…  generated PDFs
 /// ```
 /// On restore, absolute file paths stored in the database are rewritten from the
 /// backup's original `baseDir` to this device's directory, so a backup restores
@@ -46,10 +46,10 @@ class BackupService {
 
   /// Mirrors [AppDatabase.schemaVersion]; recorded in the manifest so a future
   /// version can detect and migrate older backups.
-  static const int schemaVersion = 1;
+  static const int schemaVersion = 2;
 
-  static const _dbFileName = 'papervault.sqlite';
-  static const _mediaDirName = 'papervault';
+  static const _dbFileName = 'papyra.sqlite';
+  static const _mediaDirName = 'papyra';
 
   Future<Directory> _docsDir() => _docsDirProvider();
 
@@ -62,7 +62,7 @@ class BackupService {
     final archive = Archive();
 
     final manifest = <String, Object?>{
-      'app': 'PaperVault',
+      'app': 'Papyra',
       'format': formatVersion,
       'schemaVersion': schemaVersion,
       'createdAt': DateTime.now().toIso8601String(),
@@ -96,7 +96,7 @@ class BackupService {
         .toIso8601String()
         .replaceAll(RegExp(r'[:.]'), '-')
         .substring(0, 19);
-    final outPath = p.join(tmp.path, 'papervault-backup-$stamp.zip');
+    final outPath = p.join(tmp.path, 'papyra-backup-$stamp.zip');
     await File(outPath).writeAsBytes(zip, flush: true);
     return outPath;
   }

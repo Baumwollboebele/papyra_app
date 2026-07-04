@@ -339,7 +339,9 @@ class _MetadataCard extends StatelessWidget {
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12),
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 Chip(
                   avatar: Icon(
@@ -351,6 +353,18 @@ class _MetadataCard extends StatelessWidget {
                   backgroundColor: categoryColor.withValues(alpha: 0.12),
                   side: BorderSide.none,
                 ),
+                if (detail.group != null)
+                  Chip(
+                    avatar: Icon(
+                      Icons.folder_outlined,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                    ),
+                    label: Text(detail.group!.name),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    side: BorderSide.none,
+                  ),
               ],
             ),
             if (doc.sender != null && doc.sender!.isNotEmpty)

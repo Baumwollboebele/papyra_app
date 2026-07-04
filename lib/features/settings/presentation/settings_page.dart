@@ -51,7 +51,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       final path = await ref.read(backupServiceProvider).createBackup();
       await ref
           .read(shareServiceProvider)
-          .shareFile(path, subject: 'PaperVault Backup');
+          .shareFile(path, subject: 'Papyra Backup');
     } catch (_) {
       messenger.showSnackBar(SnackBar(content: Text(l10n.backupError)));
     } finally {

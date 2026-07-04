@@ -21,7 +21,7 @@ void main() {
           categoriesEmptyOverride,
           recentDocumentsEmptyOverride,
         ],
-        child: const PaperVaultApp(),
+        child: const PapyraApp(),
       ),
     );
     await tester.pumpAndSettle();

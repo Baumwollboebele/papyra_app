@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "PaperVault",
+  "appName": "Papyra",
 
   "commonSave": "Save",
   "commonCancel": "Cancel",
@@ -35,8 +35,8 @@
   "onbGetStarted": "Get started",
   "onbLockUnavailable": "No biometric lock is available on this device.",
 
-  "lockReason": "Unlock PaperVault to view your documents.",
-  "lockTitle": "PaperVault is locked",
+  "lockReason": "Unlock Papyra to view your documents.",
+  "lockTitle": "Papyra is locked",
   "lockUnlock": "Unlock",
 
   "scanReviewTitle": "Review pages",
@@ -60,6 +60,17 @@
   "fieldNoDate": "No date",
   "fieldAddTag": "Add tag",
   "fieldOptional": "optional",
+  "fieldGroup": "Group",
+
+  "groupNone": "None",
+  "groupAll": "All",
+  "groupUngrouped": "Ungrouped",
+  "groupNew": "New group …",
+  "groupCreateTitle": "New group",
+  "groupNameHint": "e.g. Electricity, Internet/Phone",
+  "groupAutoFiled": "Filed automatically",
+  "groupAdd": "Add group",
+  "groupDeleteConfirm": "Delete group? The documents are kept and moved to “Ungrouped”.",
 
   "libCategories": "Categories",
   "libRecentlyAdded": "Recently added",
@@ -137,7 +148,7 @@
   "catCannotDelete": "Only empty, custom categories can be deleted.",
 
   "privacyHeadline": "Your documents never leave your device.",
-  "privacyBody": "PaperVault is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.",
+  "privacyBody": "Papyra is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.",
   "privacyVersion": "Version {version}",
 
   "categoryRechnungen": "Invoices",

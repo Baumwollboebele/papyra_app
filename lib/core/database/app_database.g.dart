@@ -457,6 +457,306 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   }
 }
 
+class $GroupsTable extends Groups with TableInfo<$GroupsTable, Group> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GroupsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES categories (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 120,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, categoryId, name, sortOrder];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'groups';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Group> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Group map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Group(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $GroupsTable createAlias(String alias) {
+    return $GroupsTable(attachedDatabase, alias);
+  }
+}
+
+class Group extends DataClass implements Insertable<Group> {
+  final int id;
+  final int categoryId;
+  final String name;
+  final int sortOrder;
+  const Group({
+    required this.id,
+    required this.categoryId,
+    required this.name,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['category_id'] = Variable<int>(categoryId);
+    map['name'] = Variable<String>(name);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  GroupsCompanion toCompanion(bool nullToAbsent) {
+    return GroupsCompanion(
+      id: Value(id),
+      categoryId: Value(categoryId),
+      name: Value(name),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory Group.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Group(
+      id: serializer.fromJson<int>(json['id']),
+      categoryId: serializer.fromJson<int>(json['categoryId']),
+      name: serializer.fromJson<String>(json['name']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'categoryId': serializer.toJson<int>(categoryId),
+      'name': serializer.toJson<String>(name),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  Group copyWith({int? id, int? categoryId, String? name, int? sortOrder}) =>
+      Group(
+        id: id ?? this.id,
+        categoryId: categoryId ?? this.categoryId,
+        name: name ?? this.name,
+        sortOrder: sortOrder ?? this.sortOrder,
+      );
+  Group copyWithCompanion(GroupsCompanion data) {
+    return Group(
+      id: data.id.present ? data.id.value : this.id,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      name: data.name.present ? data.name.value : this.name,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Group(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('name: $name, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, categoryId, name, sortOrder);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Group &&
+          other.id == this.id &&
+          other.categoryId == this.categoryId &&
+          other.name == this.name &&
+          other.sortOrder == this.sortOrder);
+}
+
+class GroupsCompanion extends UpdateCompanion<Group> {
+  final Value<int> id;
+  final Value<int> categoryId;
+  final Value<String> name;
+  final Value<int> sortOrder;
+  const GroupsCompanion({
+    this.id = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+  });
+  GroupsCompanion.insert({
+    this.id = const Value.absent(),
+    required int categoryId,
+    required String name,
+    this.sortOrder = const Value.absent(),
+  }) : categoryId = Value(categoryId),
+       name = Value(name);
+  static Insertable<Group> custom({
+    Expression<int>? id,
+    Expression<int>? categoryId,
+    Expression<String>? name,
+    Expression<int>? sortOrder,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (categoryId != null) 'category_id': categoryId,
+      if (name != null) 'name': name,
+      if (sortOrder != null) 'sort_order': sortOrder,
+    });
+  }
+
+  GroupsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? categoryId,
+    Value<String>? name,
+    Value<int>? sortOrder,
+  }) {
+    return GroupsCompanion(
+      id: id ?? this.id,
+      categoryId: categoryId ?? this.categoryId,
+      name: name ?? this.name,
+      sortOrder: sortOrder ?? this.sortOrder,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GroupsCompanion(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('name: $name, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $DocumentsTable extends Documents
     with TableInfo<$DocumentsTable, Document> {
   @override
@@ -501,6 +801,20 @@ class $DocumentsTable extends Documents
     requiredDuringInsert: true,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES categories (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _groupIdMeta = const VerificationMeta(
+    'groupId',
+  );
+  @override
+  late final GeneratedColumn<int> groupId = GeneratedColumn<int>(
+    'group_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES "groups" (id) ON DELETE SET NULL',
     ),
   );
   static const VerificationMeta _senderMeta = const VerificationMeta('sender');
@@ -624,6 +938,7 @@ class $DocumentsTable extends Documents
     id,
     title,
     categoryId,
+    groupId,
     sender,
     documentDate,
     createdAt,
@@ -665,6 +980,12 @@ class $DocumentsTable extends Documents
       );
     } else if (isInserting) {
       context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('group_id')) {
+      context.handle(
+        _groupIdMeta,
+        groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta),
+      );
     }
     if (data.containsKey('sender')) {
       context.handle(
@@ -760,6 +1081,10 @@ class $DocumentsTable extends Documents
         DriftSqlType.int,
         data['${effectivePrefix}category_id'],
       )!,
+      groupId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}group_id'],
+      ),
       sender: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}sender'],
@@ -813,6 +1138,9 @@ class Document extends DataClass implements Insertable<Document> {
   final int id;
   final String title;
   final int categoryId;
+
+  /// Optional sub-group within the category.
+  final int? groupId;
   final String? sender;
   final DateTime? documentDate;
   final DateTime createdAt;
@@ -827,6 +1155,7 @@ class Document extends DataClass implements Insertable<Document> {
     required this.id,
     required this.title,
     required this.categoryId,
+    this.groupId,
     this.sender,
     this.documentDate,
     required this.createdAt,
@@ -844,6 +1173,9 @@ class Document extends DataClass implements Insertable<Document> {
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
     map['category_id'] = Variable<int>(categoryId);
+    if (!nullToAbsent || groupId != null) {
+      map['group_id'] = Variable<int>(groupId);
+    }
     if (!nullToAbsent || sender != null) {
       map['sender'] = Variable<String>(sender);
     }
@@ -870,6 +1202,9 @@ class Document extends DataClass implements Insertable<Document> {
       id: Value(id),
       title: Value(title),
       categoryId: Value(categoryId),
+      groupId: groupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupId),
       sender: sender == null && nullToAbsent
           ? const Value.absent()
           : Value(sender),
@@ -900,6 +1235,7 @@ class Document extends DataClass implements Insertable<Document> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       categoryId: serializer.fromJson<int>(json['categoryId']),
+      groupId: serializer.fromJson<int?>(json['groupId']),
       sender: serializer.fromJson<String?>(json['sender']),
       documentDate: serializer.fromJson<DateTime?>(json['documentDate']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -919,6 +1255,7 @@ class Document extends DataClass implements Insertable<Document> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'categoryId': serializer.toJson<int>(categoryId),
+      'groupId': serializer.toJson<int?>(groupId),
       'sender': serializer.toJson<String?>(sender),
       'documentDate': serializer.toJson<DateTime?>(documentDate),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -936,6 +1273,7 @@ class Document extends DataClass implements Insertable<Document> {
     int? id,
     String? title,
     int? categoryId,
+    Value<int?> groupId = const Value.absent(),
     Value<String?> sender = const Value.absent(),
     Value<DateTime?> documentDate = const Value.absent(),
     DateTime? createdAt,
@@ -950,6 +1288,7 @@ class Document extends DataClass implements Insertable<Document> {
     id: id ?? this.id,
     title: title ?? this.title,
     categoryId: categoryId ?? this.categoryId,
+    groupId: groupId.present ? groupId.value : this.groupId,
     sender: sender.present ? sender.value : this.sender,
     documentDate: documentDate.present ? documentDate.value : this.documentDate,
     createdAt: createdAt ?? this.createdAt,
@@ -970,6 +1309,7 @@ class Document extends DataClass implements Insertable<Document> {
       categoryId: data.categoryId.present
           ? data.categoryId.value
           : this.categoryId,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
       sender: data.sender.present ? data.sender.value : this.sender,
       documentDate: data.documentDate.present
           ? data.documentDate.value
@@ -997,6 +1337,7 @@ class Document extends DataClass implements Insertable<Document> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('categoryId: $categoryId, ')
+          ..write('groupId: $groupId, ')
           ..write('sender: $sender, ')
           ..write('documentDate: $documentDate, ')
           ..write('createdAt: $createdAt, ')
@@ -1016,6 +1357,7 @@ class Document extends DataClass implements Insertable<Document> {
     id,
     title,
     categoryId,
+    groupId,
     sender,
     documentDate,
     createdAt,
@@ -1034,6 +1376,7 @@ class Document extends DataClass implements Insertable<Document> {
           other.id == this.id &&
           other.title == this.title &&
           other.categoryId == this.categoryId &&
+          other.groupId == this.groupId &&
           other.sender == this.sender &&
           other.documentDate == this.documentDate &&
           other.createdAt == this.createdAt &&
@@ -1050,6 +1393,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
   final Value<int> id;
   final Value<String> title;
   final Value<int> categoryId;
+  final Value<int?> groupId;
   final Value<String?> sender;
   final Value<DateTime?> documentDate;
   final Value<DateTime> createdAt;
@@ -1064,6 +1408,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.categoryId = const Value.absent(),
+    this.groupId = const Value.absent(),
     this.sender = const Value.absent(),
     this.documentDate = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1079,6 +1424,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.id = const Value.absent(),
     required String title,
     required int categoryId,
+    this.groupId = const Value.absent(),
     this.sender = const Value.absent(),
     this.documentDate = const Value.absent(),
     required DateTime createdAt,
@@ -1097,6 +1443,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Expression<int>? id,
     Expression<String>? title,
     Expression<int>? categoryId,
+    Expression<int>? groupId,
     Expression<String>? sender,
     Expression<DateTime>? documentDate,
     Expression<DateTime>? createdAt,
@@ -1112,6 +1459,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (categoryId != null) 'category_id': categoryId,
+      if (groupId != null) 'group_id': groupId,
       if (sender != null) 'sender': sender,
       if (documentDate != null) 'document_date': documentDate,
       if (createdAt != null) 'created_at': createdAt,
@@ -1129,6 +1477,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Value<int>? id,
     Value<String>? title,
     Value<int>? categoryId,
+    Value<int?>? groupId,
     Value<String?>? sender,
     Value<DateTime?>? documentDate,
     Value<DateTime>? createdAt,
@@ -1144,6 +1493,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       id: id ?? this.id,
       title: title ?? this.title,
       categoryId: categoryId ?? this.categoryId,
+      groupId: groupId ?? this.groupId,
       sender: sender ?? this.sender,
       documentDate: documentDate ?? this.documentDate,
       createdAt: createdAt ?? this.createdAt,
@@ -1168,6 +1518,9 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     }
     if (categoryId.present) {
       map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<int>(groupId.value);
     }
     if (sender.present) {
       map['sender'] = Variable<String>(sender.value);
@@ -1208,6 +1561,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('categoryId: $categoryId, ')
+          ..write('groupId: $groupId, ')
           ..write('sender: $sender, ')
           ..write('documentDate: $documentDate, ')
           ..write('createdAt: $createdAt, ')
@@ -1944,6 +2298,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $CategoriesTable categories = $CategoriesTable(this);
+  late final $GroupsTable groups = $GroupsTable(this);
   late final $DocumentsTable documents = $DocumentsTable(this);
   late final $DocumentPagesTable documentPages = $DocumentPagesTable(this);
   late final $TagsTable tags = $TagsTable(this);
@@ -1954,6 +2309,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     categories,
+    groups,
     documents,
     documentPages,
     tags,
@@ -1961,6 +2317,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'categories',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('groups', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'groups',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('documents', kind: UpdateKind.update)],
+    ),
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'documents',
@@ -2009,6 +2379,25 @@ typedef $$CategoriesTableUpdateCompanionBuilder =
 final class $$CategoriesTableReferences
     extends BaseReferences<_$AppDatabase, $CategoriesTable, Category> {
   $$CategoriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$GroupsTable, List<Group>> _groupsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.groups,
+    aliasName: 'categories__id__groups__category_id',
+  );
+
+  $$GroupsTableProcessedTableManager get groupsRefs {
+    final manager = $$GroupsTableTableManager(
+      $_db,
+      $_db.groups,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_groupsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 
   static MultiTypedResultKey<$DocumentsTable, List<Document>>
   _documentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
@@ -2072,6 +2461,31 @@ class $$CategoriesTableFilterComposer
     column: $table.sortOrder,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> groupsRefs(
+    Expression<bool> Function($$GroupsTableFilterComposer f) f,
+  ) {
+    final $$GroupsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.groups,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupsTableFilterComposer(
+            $db: $db,
+            $table: $db.groups,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 
   Expression<bool> documentsRefs(
     Expression<bool> Function($$DocumentsTableFilterComposer f) f,
@@ -2176,6 +2590,31 @@ class $$CategoriesTableAnnotationComposer
   GeneratedColumn<int> get sortOrder =>
       $composableBuilder(column: $table.sortOrder, builder: (column) => column);
 
+  Expression<T> groupsRefs<T extends Object>(
+    Expression<T> Function($$GroupsTableAnnotationComposer a) f,
+  ) {
+    final $$GroupsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.groups,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.groups,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> documentsRefs<T extends Object>(
     Expression<T> Function($$DocumentsTableAnnotationComposer a) f,
   ) {
@@ -2215,7 +2654,7 @@ class $$CategoriesTableTableManager
           $$CategoriesTableUpdateCompanionBuilder,
           (Category, $$CategoriesTableReferences),
           Category,
-          PrefetchHooks Function({bool documentsRefs})
+          PrefetchHooks Function({bool groupsRefs, bool documentsRefs})
         > {
   $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
     : super(
@@ -2272,13 +2711,31 @@ class $$CategoriesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({documentsRefs = false}) {
+          prefetchHooksCallback: ({groupsRefs = false, documentsRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [if (documentsRefs) db.documents],
+              explicitlyWatchedTables: [
+                if (groupsRefs) db.groups,
+                if (documentsRefs) db.documents,
+              ],
               addJoins: null,
               getPrefetchedDataCallback: (items) async {
                 return [
+                  if (groupsRefs)
+                    await $_getPrefetchedData<
+                      Category,
+                      $CategoriesTable,
+                      Group
+                    >(
+                      currentTable: table,
+                      referencedTable: $$CategoriesTableReferences
+                          ._groupsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$CategoriesTableReferences(db, table, p0).groupsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.categoryId == item.id),
+                      typedResults: items,
+                    ),
                   if (documentsRefs)
                     await $_getPrefetchedData<
                       Category,
@@ -2318,13 +2775,384 @@ typedef $$CategoriesTableProcessedTableManager =
       $$CategoriesTableUpdateCompanionBuilder,
       (Category, $$CategoriesTableReferences),
       Category,
-      PrefetchHooks Function({bool documentsRefs})
+      PrefetchHooks Function({bool groupsRefs, bool documentsRefs})
+    >;
+typedef $$GroupsTableCreateCompanionBuilder =
+    GroupsCompanion Function({
+      Value<int> id,
+      required int categoryId,
+      required String name,
+      Value<int> sortOrder,
+    });
+typedef $$GroupsTableUpdateCompanionBuilder =
+    GroupsCompanion Function({
+      Value<int> id,
+      Value<int> categoryId,
+      Value<String> name,
+      Value<int> sortOrder,
+    });
+
+final class $$GroupsTableReferences
+    extends BaseReferences<_$AppDatabase, $GroupsTable, Group> {
+  $$GroupsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $CategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.categories.createAlias('groups__category_id__categories__id');
+
+  $$CategoriesTableProcessedTableManager get categoryId {
+    final $_column = $_itemColumn<int>('category_id')!;
+
+    final manager = $$CategoriesTableTableManager(
+      $_db,
+      $_db.categories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$DocumentsTable, List<Document>>
+  _documentsRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.documents,
+    aliasName: 'groups__id__documents__group_id',
+  );
+
+  $$DocumentsTableProcessedTableManager get documentsRefs {
+    final manager = $$DocumentsTableTableManager(
+      $_db,
+      $_db.documents,
+    ).filter((f) => f.groupId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_documentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$GroupsTableFilterComposer
+    extends Composer<_$AppDatabase, $GroupsTable> {
+  $$GroupsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$CategoriesTableFilterComposer get categoryId {
+    final $$CategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> documentsRefs(
+    Expression<bool> Function($$DocumentsTableFilterComposer f) f,
+  ) {
+    final $$DocumentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.documents,
+      getReferencedColumn: (t) => t.groupId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DocumentsTableFilterComposer(
+            $db: $db,
+            $table: $db.documents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GroupsTableOrderingComposer
+    extends Composer<_$AppDatabase, $GroupsTable> {
+  $$GroupsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$CategoriesTableOrderingComposer get categoryId {
+    final $$CategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$GroupsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GroupsTable> {
+  $$GroupsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  $$CategoriesTableAnnotationComposer get categoryId {
+    final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> documentsRefs<T extends Object>(
+    Expression<T> Function($$DocumentsTableAnnotationComposer a) f,
+  ) {
+    final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.documents,
+      getReferencedColumn: (t) => t.groupId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DocumentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.documents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GroupsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GroupsTable,
+          Group,
+          $$GroupsTableFilterComposer,
+          $$GroupsTableOrderingComposer,
+          $$GroupsTableAnnotationComposer,
+          $$GroupsTableCreateCompanionBuilder,
+          $$GroupsTableUpdateCompanionBuilder,
+          (Group, $$GroupsTableReferences),
+          Group,
+          PrefetchHooks Function({bool categoryId, bool documentsRefs})
+        > {
+  $$GroupsTableTableManager(_$AppDatabase db, $GroupsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GroupsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GroupsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GroupsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> categoryId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+              }) => GroupsCompanion(
+                id: id,
+                categoryId: categoryId,
+                name: name,
+                sortOrder: sortOrder,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int categoryId,
+                required String name,
+                Value<int> sortOrder = const Value.absent(),
+              }) => GroupsCompanion.insert(
+                id: id,
+                categoryId: categoryId,
+                name: name,
+                sortOrder: sortOrder,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$GroupsTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryId = false, documentsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (documentsRefs) db.documents],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (categoryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.categoryId,
+                                referencedTable: $$GroupsTableReferences
+                                    ._categoryIdTable(db),
+                                referencedColumn: $$GroupsTableReferences
+                                    ._categoryIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (documentsRefs)
+                    await $_getPrefetchedData<Group, $GroupsTable, Document>(
+                      currentTable: table,
+                      referencedTable: $$GroupsTableReferences
+                          ._documentsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$GroupsTableReferences(db, table, p0).documentsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.groupId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GroupsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GroupsTable,
+      Group,
+      $$GroupsTableFilterComposer,
+      $$GroupsTableOrderingComposer,
+      $$GroupsTableAnnotationComposer,
+      $$GroupsTableCreateCompanionBuilder,
+      $$GroupsTableUpdateCompanionBuilder,
+      (Group, $$GroupsTableReferences),
+      Group,
+      PrefetchHooks Function({bool categoryId, bool documentsRefs})
     >;
 typedef $$DocumentsTableCreateCompanionBuilder =
     DocumentsCompanion Function({
       Value<int> id,
       required String title,
       required int categoryId,
+      Value<int?> groupId,
       Value<String?> sender,
       Value<DateTime?> documentDate,
       required DateTime createdAt,
@@ -2341,6 +3169,7 @@ typedef $$DocumentsTableUpdateCompanionBuilder =
       Value<int> id,
       Value<String> title,
       Value<int> categoryId,
+      Value<int?> groupId,
       Value<String?> sender,
       Value<DateTime?> documentDate,
       Value<DateTime> createdAt,
@@ -2368,6 +3197,23 @@ final class $$DocumentsTableReferences
       $_db.categories,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $GroupsTable _groupIdTable(_$AppDatabase db) =>
+      db.groups.createAlias('documents__group_id__groups__id');
+
+  $$GroupsTableProcessedTableManager? get groupId {
+    final $_column = $_itemColumn<int>('group_id');
+    if ($_column == null) return null;
+    final manager = $$GroupsTableTableManager(
+      $_db,
+      $_db.groups,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_groupIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -2494,6 +3340,29 @@ class $$DocumentsTableFilterComposer
           }) => $$CategoriesTableFilterComposer(
             $db: $db,
             $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GroupsTableFilterComposer get groupId {
+    final $$GroupsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.groups,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupsTableFilterComposer(
+            $db: $db,
+            $table: $db.groups,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -2645,6 +3514,29 @@ class $$DocumentsTableOrderingComposer
     );
     return composer;
   }
+
+  $$GroupsTableOrderingComposer get groupId {
+    final $$GroupsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.groups,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupsTableOrderingComposer(
+            $db: $db,
+            $table: $db.groups,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$DocumentsTableAnnotationComposer
@@ -2723,6 +3615,29 @@ class $$DocumentsTableAnnotationComposer
     return composer;
   }
 
+  $$GroupsTableAnnotationComposer get groupId {
+    final $$GroupsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.groupId,
+      referencedTable: $db.groups,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GroupsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.groups,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   Expression<T> documentPagesRefs<T extends Object>(
     Expression<T> Function($$DocumentPagesTableAnnotationComposer a) f,
   ) {
@@ -2789,6 +3704,7 @@ class $$DocumentsTableTableManager
           Document,
           PrefetchHooks Function({
             bool categoryId,
+            bool groupId,
             bool documentPagesRefs,
             bool documentTagsRefs,
           })
@@ -2809,6 +3725,7 @@ class $$DocumentsTableTableManager
                 Value<int> id = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<int> categoryId = const Value.absent(),
+                Value<int?> groupId = const Value.absent(),
                 Value<String?> sender = const Value.absent(),
                 Value<DateTime?> documentDate = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -2823,6 +3740,7 @@ class $$DocumentsTableTableManager
                 id: id,
                 title: title,
                 categoryId: categoryId,
+                groupId: groupId,
                 sender: sender,
                 documentDate: documentDate,
                 createdAt: createdAt,
@@ -2839,6 +3757,7 @@ class $$DocumentsTableTableManager
                 Value<int> id = const Value.absent(),
                 required String title,
                 required int categoryId,
+                Value<int?> groupId = const Value.absent(),
                 Value<String?> sender = const Value.absent(),
                 Value<DateTime?> documentDate = const Value.absent(),
                 required DateTime createdAt,
@@ -2853,6 +3772,7 @@ class $$DocumentsTableTableManager
                 id: id,
                 title: title,
                 categoryId: categoryId,
+                groupId: groupId,
                 sender: sender,
                 documentDate: documentDate,
                 createdAt: createdAt,
@@ -2875,6 +3795,7 @@ class $$DocumentsTableTableManager
           prefetchHooksCallback:
               ({
                 categoryId = false,
+                groupId = false,
                 documentPagesRefs = false,
                 documentTagsRefs = false,
               }) {
@@ -2909,6 +3830,19 @@ class $$DocumentsTableTableManager
                                         ._categoryIdTable(db),
                                     referencedColumn: $$DocumentsTableReferences
                                         ._categoryIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+                        if (groupId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.groupId,
+                                    referencedTable: $$DocumentsTableReferences
+                                        ._groupIdTable(db),
+                                    referencedColumn: $$DocumentsTableReferences
+                                        ._groupIdTable(db)
                                         .id,
                                   )
                                   as T;
@@ -2982,6 +3916,7 @@ typedef $$DocumentsTableProcessedTableManager =
       Document,
       PrefetchHooks Function({
         bool categoryId,
+        bool groupId,
         bool documentPagesRefs,
         bool documentTagsRefs,
       })
@@ -3846,6 +4781,8 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$CategoriesTableTableManager get categories =>
       $$CategoriesTableTableManager(_db, _db.categories);
+  $$GroupsTableTableManager get groups =>
+      $$GroupsTableTableManager(_db, _db.groups);
   $$DocumentsTableTableManager get documents =>
       $$DocumentsTableTableManager(_db, _db.documents);
   $$DocumentPagesTableTableManager get documentPages =>

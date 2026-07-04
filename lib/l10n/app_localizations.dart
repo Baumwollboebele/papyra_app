@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// The product name shown in the UI. Single source of truth for renaming.
   ///
   /// In de, this message translates to:
-  /// **'PaperVault'**
+  /// **'Papyra'**
   String get appName;
 
   /// No description provided for @commonSave.
@@ -281,13 +281,13 @@ abstract class AppLocalizations {
   /// No description provided for @lockReason.
   ///
   /// In de, this message translates to:
-  /// **'Entsperre PaperVault, um deine Dokumente zu sehen.'**
+  /// **'Entsperre Papyra, um deine Dokumente zu sehen.'**
   String get lockReason;
 
   /// No description provided for @lockTitle.
   ///
   /// In de, this message translates to:
-  /// **'PaperVault ist gesperrt'**
+  /// **'Papyra ist gesperrt'**
   String get lockTitle;
 
   /// No description provided for @lockUnlock.
@@ -415,6 +415,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'optional'**
   String get fieldOptional;
+
+  /// No description provided for @fieldGroup.
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe'**
+  String get fieldGroup;
+
+  /// No description provided for @groupNone.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get groupNone;
+
+  /// No description provided for @groupAll.
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get groupAll;
+
+  /// No description provided for @groupUngrouped.
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Gruppe'**
+  String get groupUngrouped;
+
+  /// No description provided for @groupNew.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe …'**
+  String get groupNew;
+
+  /// No description provided for @groupCreateTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe'**
+  String get groupCreateTitle;
+
+  /// No description provided for @groupNameHint.
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Strom, Internet/Telefonie'**
+  String get groupNameHint;
+
+  /// No description provided for @groupAutoFiled.
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch einsortiert'**
+  String get groupAutoFiled;
+
+  /// No description provided for @groupAdd.
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe hinzufügen'**
+  String get groupAdd;
+
+  /// No description provided for @groupDeleteConfirm.
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe löschen? Die Dokumente bleiben erhalten und werden zu „Ohne Gruppe“.'**
+  String get groupDeleteConfirm;
 
   /// No description provided for @libCategories.
   ///
@@ -839,7 +899,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyBody.
   ///
   /// In de, this message translates to:
-  /// **'PaperVault ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.'**
+  /// **'Papyra ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.'**
   String get privacyBody;
 
   /// No description provided for @privacyVersion.

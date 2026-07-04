@@ -10,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 LazyDatabase openAppConnection() {
   return LazyDatabase(() async {
     final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'papervault.sqlite'));
+    final file = File(p.join(dir.path, 'papyra.sqlite'));
     return NativeDatabase.createInBackground(file);
   });
 }

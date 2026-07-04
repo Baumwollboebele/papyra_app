@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         // Placeholder application id — change this before publishing.
-        applicationId = "de.example.papervault"
+        applicationId = "de.example.papyra"
         // minSdk 24: required floor for the ML Kit text recognition + document
         // scanner and local_auth plugins (see README "Minimum OS versions").
         minSdk = 24

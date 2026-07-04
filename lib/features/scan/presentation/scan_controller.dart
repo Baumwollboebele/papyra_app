@@ -116,11 +116,17 @@ class ScanController extends Notifier<ScanState> {
         fallbackCategoryId: fallbackId,
       );
 
+      // Auto-file: if the sender already lives in a group of this category,
+      // pre-select that group.
+      final suggestedGroupId = await ref
+          .read(groupRepositoryProvider)
+          .suggestGroupId(result.draft.categoryId, result.draft.sender);
+
       state = state.copyWith(
         phase: ScanPhase.confirm,
         pages: pages,
         classification: result.classification,
-        draft: result.draft,
+        draft: result.draft.copyWith(groupId: suggestedGroupId),
       );
     } catch (_) {
       // OCR failed: still let the user save with empty text.
@@ -202,6 +208,7 @@ class ScanController extends Notifier<ScanState> {
               currency: draft.currency,
               ocrText: ocrText,
               tags: draft.tags,
+              groupId: draft.groupId,
             ),
           );
 

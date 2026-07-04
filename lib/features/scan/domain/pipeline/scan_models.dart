@@ -29,6 +29,7 @@ class ConfirmationDraft {
     this.currency = 'EUR',
     this.iban,
     this.tags = const [],
+    this.groupId,
   });
 
   final String title;
@@ -52,6 +53,9 @@ class ConfirmationDraft {
   final String? iban;
   final List<String> tags;
 
+  /// Selected sub-group within [categoryId] (null = none).
+  final int? groupId;
+
   ConfirmationDraft copyWith({
     String? title,
     int? categoryId,
@@ -60,6 +64,7 @@ class ConfirmationDraft {
     Object? amountCents = _sentinel,
     String? currency,
     List<String>? tags,
+    Object? groupId = _sentinel,
   }) {
     return ConfirmationDraft(
       title: title ?? this.title,
@@ -75,6 +80,7 @@ class ConfirmationDraft {
       currency: currency ?? this.currency,
       iban: iban,
       tags: tags ?? this.tags,
+      groupId: groupId == _sentinel ? this.groupId : groupId as int?,
     );
   }
 

@@ -1,6 +1,6 @@
 {
   "@@locale": "de",
-  "appName": "PaperVault",
+  "appName": "Papyra",
   "@appName": {
     "description": "The product name shown in the UI. Single source of truth for renaming."
   },
@@ -38,8 +38,8 @@
   "onbGetStarted": "Los geht's",
   "onbLockUnavailable": "Auf diesem Gerät ist keine biometrische Sperre verfügbar.",
 
-  "lockReason": "Entsperre PaperVault, um deine Dokumente zu sehen.",
-  "lockTitle": "PaperVault ist gesperrt",
+  "lockReason": "Entsperre Papyra, um deine Dokumente zu sehen.",
+  "lockTitle": "Papyra ist gesperrt",
   "lockUnlock": "Entsperren",
 
   "scanReviewTitle": "Seiten prüfen",
@@ -65,6 +65,17 @@
   "fieldNoDate": "Kein Datum",
   "fieldAddTag": "Schlagwort hinzufügen",
   "fieldOptional": "optional",
+  "fieldGroup": "Gruppe",
+
+  "groupNone": "Keine",
+  "groupAll": "Alle",
+  "groupUngrouped": "Ohne Gruppe",
+  "groupNew": "Neue Gruppe …",
+  "groupCreateTitle": "Neue Gruppe",
+  "groupNameHint": "z. B. Strom, Internet/Telefonie",
+  "groupAutoFiled": "Automatisch einsortiert",
+  "groupAdd": "Gruppe hinzufügen",
+  "groupDeleteConfirm": "Gruppe löschen? Die Dokumente bleiben erhalten und werden zu „Ohne Gruppe“.",
 
   "libCategories": "Kategorien",
   "libRecentlyAdded": "Zuletzt hinzugefügt",
@@ -144,7 +155,7 @@
   "catCannotDelete": "Nur leere, selbst erstellte Kategorien können gelöscht werden.",
 
   "privacyHeadline": "Deine Dokumente verlassen nie dein Gerät.",
-  "privacyBody": "PaperVault ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.",
+  "privacyBody": "Papyra ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.",
   "privacyVersion": "Version {version}",
   "@privacyVersion": { "placeholders": { "version": { "type": "String" } } },
 

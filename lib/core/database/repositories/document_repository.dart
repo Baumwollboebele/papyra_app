@@ -16,6 +16,7 @@ class DocumentDraft {
     this.currency = 'EUR',
     this.ocrText = '',
     this.tags = const [],
+    this.groupId,
   });
 
   final String title;
@@ -29,6 +30,7 @@ class DocumentDraft {
   final String currency;
   final String ocrText;
   final List<String> tags;
+  final int? groupId;
 }
 
 /// A document with everything the detail screen needs.
@@ -38,12 +40,14 @@ class DocumentDetail {
     required this.category,
     required this.pages,
     required this.tags,
+    this.group,
   });
 
   final Document document;
   final Category category;
   final List<DocumentPage> pages;
   final List<Tag> tags;
+  final Group? group;
 }
 
 /// Filesystem paths owned by a document, returned on delete for cleanup.
@@ -102,11 +106,24 @@ class DocumentRepository {
   Stream<List<Document>> watchByCategory(
     int categoryId, {
     DocumentSort sort = DocumentSort.newestFirst,
+    int? groupId,
+    bool ungroupedOnly = false,
   }) {
     final query = _db.select(_db.documents)
       ..where((d) => d.categoryId.equals(categoryId))
       ..orderBy([_orderingFor(sort)]);
+    if (ungroupedOnly) {
+      query.where((d) => d.groupId.isNull());
+    } else if (groupId != null) {
+      query.where((d) => d.groupId.equals(groupId));
+    }
     return query.watch();
+  }
+
+  Future<void> setGroup(int id, int? groupId) {
+    return (_db.update(_db.documents)..where((d) => d.id.equals(id))).write(
+      DocumentsCompanion(groupId: Value(groupId)),
+    );
   }
 
   Stream<Document?> watchDocument(int id) {
@@ -143,11 +160,18 @@ class DocumentRepository {
               ..orderBy([(pg) => OrderingTerm(expression: pg.pageIndex)]))
             .get();
     final tags = await _tagsFor(id);
+    Group? group;
+    if (document.groupId != null) {
+      group = await (_db.select(
+        _db.groups,
+      )..where((g) => g.id.equals(document.groupId!))).getSingleOrNull();
+    }
     return DocumentDetail(
       document: document,
       category: category,
       pages: pages,
       tags: tags,
+      group: group,
     );
   }
 
@@ -186,6 +210,7 @@ class DocumentRepository {
               thumbnailPath: Value(draft.thumbnailPath),
               ocrText: Value(draft.ocrText),
               pageCount: Value(draft.pageImagePaths.length),
+              groupId: Value(draft.groupId),
             ),
           );
       for (var i = 0; i < draft.pageImagePaths.length; i++) {
@@ -221,6 +246,7 @@ class DocumentRepository {
     DateTime? documentDate,
     int? amountCents,
     String? currency,
+    int? groupId,
   }) {
     return _db.transaction(() async {
       await (_db.update(_db.documents)..where((d) => d.id.equals(id))).write(
@@ -231,15 +257,20 @@ class DocumentRepository {
           documentDate: Value(documentDate),
           amountCents: Value(amountCents),
           currency: currency == null ? const Value.absent() : Value(currency),
+          groupId: Value(groupId),
         ),
       );
       await _reindex(id);
     });
   }
 
+  /// Moves to another category and clears the sub-group (groups are per-category).
   Future<void> moveToCategory(int id, int categoryId) {
     return (_db.update(_db.documents)..where((d) => d.id.equals(id))).write(
-      DocumentsCompanion(categoryId: Value(categoryId)),
+      DocumentsCompanion(
+        categoryId: Value(categoryId),
+        groupId: const Value(null),
+      ),
     );
   }
 

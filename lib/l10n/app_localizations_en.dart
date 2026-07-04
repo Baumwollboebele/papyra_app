@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'PaperVault';
+  String get appName => 'Papyra';
 
   @override
   String get commonSave => 'Save';
@@ -103,10 +103,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'No biometric lock is available on this device.';
 
   @override
-  String get lockReason => 'Unlock PaperVault to view your documents.';
+  String get lockReason => 'Unlock Papyra to view your documents.';
 
   @override
-  String get lockTitle => 'PaperVault is locked';
+  String get lockTitle => 'Papyra is locked';
 
   @override
   String get lockUnlock => 'Unlock';
@@ -180,6 +180,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldOptional => 'optional';
+
+  @override
+  String get fieldGroup => 'Group';
+
+  @override
+  String get groupNone => 'None';
+
+  @override
+  String get groupAll => 'All';
+
+  @override
+  String get groupUngrouped => 'Ungrouped';
+
+  @override
+  String get groupNew => 'New group …';
+
+  @override
+  String get groupCreateTitle => 'New group';
+
+  @override
+  String get groupNameHint => 'e.g. Electricity, Internet/Phone';
+
+  @override
+  String get groupAutoFiled => 'Filed automatically';
+
+  @override
+  String get groupAdd => 'Add group';
+
+  @override
+  String get groupDeleteConfirm =>
+      'Delete group? The documents are kept and moved to “Ungrouped”.';
 
   @override
   String get libCategories => 'Categories';
@@ -405,7 +436,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'PaperVault is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.';
+      'Papyra is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.';
 
   @override
   String privacyVersion(String version) {

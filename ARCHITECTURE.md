@@ -1,4 +1,4 @@
-# ARCHITECTURE.md — PaperVault
+# ARCHITECTURE.md — Papyra
 
 This document describes the structure of the app, the data flow through the scan pipeline, the persistence layer, and the **extension points** designed for the Phase 2 roadmap.
 

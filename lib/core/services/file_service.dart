@@ -25,7 +25,7 @@ class FileService {
 
   Future<Directory> _dir(String sub) async {
     final base = await getApplicationDocumentsDirectory();
-    final dir = Directory(p.join(base.path, 'papervault', sub));
+    final dir = Directory(p.join(base.path, 'papyra', sub));
     if (!dir.existsSync()) {
       await dir.create(recursive: true);
     }

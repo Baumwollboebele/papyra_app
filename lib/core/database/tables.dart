@@ -14,12 +14,27 @@ class Categories extends Table {
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 }
 
+/// User-defined sub-groups within a category (e.g. "Strom",
+/// "Internet/Telefonie" inside Verträge). Documents are auto-filed into a group
+/// when their sender matches one already in that group.
+class Groups extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get categoryId =>
+      integer().references(Categories, #id, onDelete: KeyAction.cascade)();
+  TextColumn get name => text().withLength(min: 1, max: 120)();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+}
+
 /// A saved document = generated PDF + metadata + OCR text.
 class Documents extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text().withLength(min: 1, max: 300)();
   IntColumn get categoryId =>
       integer().references(Categories, #id, onDelete: KeyAction.restrict)();
+
+  /// Optional sub-group within the category.
+  IntColumn get groupId =>
+      integer().nullable().references(Groups, #id, onDelete: KeyAction.setNull)();
   TextColumn get sender => text().nullable()();
   DateTimeColumn get documentDate => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();

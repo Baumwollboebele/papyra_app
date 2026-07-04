@@ -22,10 +22,11 @@ class AppShell extends StatelessWidget {
     final l10n = context.l10n;
     return Scaffold(
       body: navigationShell,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton.extended(
         heroTag: 'scan-fab',
         onPressed: () => _startScan(context),
+        elevation: 2,
         icon: const Icon(Icons.document_scanner_outlined),
         label: Text(l10n.scanButton),
       ),

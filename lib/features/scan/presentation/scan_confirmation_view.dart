@@ -5,6 +5,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/formatting/formatters.dart';
 import '../../../core/l10n/l10n_extension.dart';
 import '../../../core/providers/database_providers.dart';
+import '../../../core/widgets/group_picker.dart';
 import '../../../core/widgets/tag_editor.dart';
 import '../domain/pipeline/scan_models.dart';
 import 'scan_controller.dart';
@@ -29,11 +30,13 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
   late int _categoryId;
   DateTime? _date;
   late List<String> _tags;
+  int? _groupId;
 
   @override
   void initState() {
     super.initState();
     final d = widget.draft;
+    _groupId = d.groupId;
     _title = TextEditingController(text: d.title);
     _sender = TextEditingController(text: d.sender ?? '');
     _amount = TextEditingController(
@@ -86,6 +89,7 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
         documentDate: _date,
         amountCents: parseAmountToCents(_amount.text),
         tags: _tags,
+        groupId: _groupId,
       ),
     );
     controller.save();
@@ -121,7 +125,19 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
                 for (final c in categories)
                   DropdownMenuItem(value: c.id, child: Text(c.name)),
               ],
-              onChanged: (v) => setState(() => _categoryId = v ?? _categoryId),
+              onChanged: (v) => setState(() {
+                if (v != null && v != _categoryId) {
+                  _categoryId = v;
+                  _groupId = null; // groups are per-category
+                }
+              }),
+            ),
+            const SizedBox(height: 16),
+            _label(l10n.fieldGroup),
+            GroupPicker(
+              categoryId: _categoryId,
+              selectedGroupId: _groupId,
+              onChanged: (id) => setState(() => _groupId = id),
             ),
             const SizedBox(height: 16),
             _label('${l10n.fieldSender} (${l10n.fieldOptional})'),

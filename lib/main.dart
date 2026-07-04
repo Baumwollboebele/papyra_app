@@ -25,13 +25,13 @@ Future<void> main() async {
         settingsStoreProvider.overrideWithValue(store),
         initialSettingsProvider.overrideWithValue(initialSettings),
       ],
-      child: const PaperVaultApp(),
+      child: const PapyraApp(),
     ),
   );
 }
 
-class PaperVaultApp extends ConsumerWidget {
-  const PaperVaultApp({super.key});
+class PapyraApp extends ConsumerWidget {
+  const PapyraApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

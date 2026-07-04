@@ -7,11 +7,11 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>PaperVault</string>
+	<string>Papyra</string>
 	<key>NSCameraUsageDescription</key>
-	<string>PaperVault verwendet die Kamera, um deine Dokumente zu scannen. Die Aufnahmen bleiben ausschließlich auf deinem Gerät.</string>
+	<string>Papyra verwendet die Kamera, um deine Dokumente zu scannen. Die Aufnahmen bleiben ausschließlich auf deinem Gerät.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>PaperVault nutzt Face ID, um deine Dokumente mit der App-Sperre zu schützen.</string>
+	<string>Papyra nutzt Face ID, um deine Dokumente mit der App-Sperre zu schützen.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,7 +19,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>PaperVault</string>
+	<string>Papyra</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>de</string>

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-/// Lightweight, license-free custom-painted illustration for onboarding and
-/// empty states: a soft halo behind a stylized stack of document cards with an
-/// icon badge. Colors derive from the theme so it adapts to light/dark.
+/// Clean, license-free illustration for onboarding and empty states: a gradient
+/// "medallion" (concentric soft rings + a filled circle with a subtle gradient)
+/// holding a single centered icon. Adapts to the theme and reads as calm,
+/// professional and trustworthy — and looks right with any icon.
 class OnboardingArt extends StatelessWidget {
   const OnboardingArt({
     required this.icon,
     required this.color,
-    this.size = 220,
+    this.size = 200,
     super.key,
   });
 
@@ -17,88 +18,50 @@ class OnboardingArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _ArtPainter(
-          color: color,
-          surface: Theme.of(context).colorScheme.surface,
-        ),
-        child: Center(
-          child: Container(
-            width: size * 0.32,
-            height: size * 0.32,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer soft rings.
+          _ring(size, color.withValues(alpha: isDark ? 0.10 : 0.07)),
+          _ring(size * 0.78, color.withValues(alpha: isDark ? 0.16 : 0.11)),
+          // Gradient medallion.
+          Container(
+            width: size * 0.52,
+            height: size * 0.52,
             decoration: BoxDecoration(
-              color: color,
               shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color.lerp(color, Colors.white, 0.12)!,
+                  Color.lerp(color, Colors.black, 0.14)!,
+                ],
+              ),
               boxShadow: [
                 BoxShadow(
                   color: color.withValues(alpha: 0.35),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
+                  blurRadius: 28,
+                  offset: const Offset(0, 10),
                 ),
               ],
             ),
-            child: Icon(icon, color: Colors.white, size: size * 0.16),
+            child: Icon(icon, color: Colors.white, size: size * 0.22),
           ),
-        ),
+        ],
       ),
     );
   }
-}
 
-class _ArtPainter extends CustomPainter {
-  _ArtPainter({required this.color, required this.surface});
-
-  final Color color;
-  final Color surface;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-
-    // Soft halo.
-    canvas.drawCircle(
-      center,
-      size.width * 0.46,
-      Paint()..color = color.withValues(alpha: 0.10),
+  Widget _ring(double diameter, Color color) {
+    return Container(
+      width: diameter,
+      height: diameter,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
-    canvas.drawCircle(
-      center,
-      size.width * 0.36,
-      Paint()..color = color.withValues(alpha: 0.14),
-    );
-
-    // A little stack of tilted "document" cards.
-    final cardPaint = Paint()..color = surface;
-    final borderPaint = Paint()
-      ..color = color.withValues(alpha: 0.55)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
-
-    void card(double dx, double dy, double angle) {
-      canvas.save();
-      canvas.translate(center.dx + dx, center.dy + dy);
-      canvas.rotate(angle);
-      final rect = RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset.zero,
-          width: size.width * 0.5,
-          height: size.width * 0.62,
-        ),
-        const Radius.circular(14),
-      );
-      canvas.drawRRect(rect, cardPaint);
-      canvas.drawRRect(rect, borderPaint);
-      canvas.restore();
-    }
-
-    card(-size.width * 0.10, size.height * 0.02, -0.18);
-    card(size.width * 0.10, -size.height * 0.02, 0.12);
   }
-
-  @override
-  bool shouldRepaint(covariant _ArtPainter old) =>
-      old.color != color || old.surface != surface;
 }

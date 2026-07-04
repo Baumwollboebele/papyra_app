@@ -5,6 +5,7 @@ import '../../../core/database/repositories/document_repository.dart';
 import '../../../core/formatting/formatters.dart';
 import '../../../core/l10n/l10n_extension.dart';
 import '../../../core/providers/database_providers.dart';
+import '../../../core/widgets/group_picker.dart';
 import '../../../core/widgets/tag_editor.dart';
 
 /// Edits an existing document's metadata and tags.
@@ -26,12 +27,14 @@ class _DocumentEditPageState extends ConsumerState<DocumentEditPage> {
   late int _categoryId;
   DateTime? _date;
   late List<String> _tags;
+  int? _groupId;
   bool _saving = false;
 
   @override
   void initState() {
     super.initState();
     final d = widget.detail.document;
+    _groupId = d.groupId;
     _title = TextEditingController(text: d.title);
     _sender = TextEditingController(text: d.sender ?? '');
     _amount = TextEditingController(
@@ -86,6 +89,7 @@ class _DocumentEditPageState extends ConsumerState<DocumentEditPage> {
       sender: _sender.text.trim().isEmpty ? null : _sender.text.trim(),
       documentDate: _date,
       amountCents: parseAmountToCents(_amount.text),
+      groupId: _groupId,
     );
     await repo.setTags(id, _tags);
     ref.invalidate(documentDetailProvider(id));
@@ -115,7 +119,19 @@ class _DocumentEditPageState extends ConsumerState<DocumentEditPage> {
                 for (final c in categories)
                   DropdownMenuItem(value: c.id, child: Text(c.name)),
               ],
-              onChanged: (v) => setState(() => _categoryId = v ?? _categoryId),
+              onChanged: (v) => setState(() {
+                if (v != null && v != _categoryId) {
+                  _categoryId = v;
+                  _groupId = null; // groups are per-category
+                }
+              }),
+            ),
+            const SizedBox(height: 16),
+            _label(l10n.fieldGroup),
+            GroupPicker(
+              categoryId: _categoryId,
+              selectedGroupId: _groupId,
+              onChanged: (id) => setState(() => _groupId = id),
             ),
             const SizedBox(height: 16),
             _label('${l10n.fieldSender} (${l10n.fieldOptional})'),

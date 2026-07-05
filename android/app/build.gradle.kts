@@ -1,7 +1,21 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Release signing is configured via android/key.properties (kept out of version
+// control). When the file is absent — e.g. on a fresh checkout or CI without
+// secrets — the release build falls back to the debug keys so `flutter run
+// --release` and local test builds still work. See android/key.properties.example.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+val hasReleaseSigning = keystorePropertiesFile.exists()
+if (hasReleaseSigning) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -18,8 +32,9 @@ android {
     }
 
     defaultConfig {
-        // Placeholder application id — change this before publishing.
-        applicationId = "de.example.papyra"
+        // Real, publishable application id (no ".example."). Permanent once the
+        // app is live on Play, so do not change it after the first release.
+        applicationId = "de.papyra.app"
         // minSdk 24: required floor for the ML Kit text recognition + document
         // scanner and local_auth plugins (see README "Minimum OS versions").
         minSdk = 24
@@ -28,11 +43,26 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            if (hasReleaseSigning) {
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Use the real upload key when key.properties is present; otherwise
+            // fall back to debug keys so local/test release builds still work.
+            signingConfig = if (hasReleaseSigning) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

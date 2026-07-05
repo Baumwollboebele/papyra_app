@@ -82,7 +82,8 @@ The seeded row `sonstiges` is the fallback for low-confidence classification.
 
 ## Platform notes
 
-- **App id:** `de.example.papyra` (placeholder — see "Renaming").
+- **App id:** `de.papyra.app` (final, publishable — permanent once live on Play). The Android `namespace`/Kotlin package is still `com.example.paperless`; that is internal-only (R class, not checked by Play).
+- **Release signing:** configured via `android/key.properties` (gitignored); falls back to debug keys when absent. See `android/key.properties.example`.
 - **iOS:** requires `NSCameraUsageDescription` + `NSFaceIDUsageDescription` (de/en), `PrivacyInfo.xcprivacy`, file protection. iOS **cannot be compiled on Windows** — verify on macOS.
 - **Android:** camera permission with rationale; **no `INTERNET` permission** (proves the offline claim). minSdk is driven by the ML Kit / scanner plugins — see README.
 

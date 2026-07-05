@@ -6,7 +6,13 @@ import '../providers/settings_providers.dart';
 import '../services/app_lock_service.dart';
 
 /// Wraps the app and, when the app lock is enabled, requires biometric/passcode
-/// authentication on cold start and after the app returns from the background.
+/// authentication once on cold start.
+///
+/// It deliberately does NOT re-lock when the app returns from the background:
+/// opening the camera scanner, file picker or share sheet briefly backgrounds
+/// the app, and re-locking on every resume forced a fingerprint prompt after
+/// each of those normal actions. A fresh unlock is only required on a real
+/// cold start (a new process runs [initState] again).
 class AppLockGate extends ConsumerStatefulWidget {
   const AppLockGate({required this.child, super.key});
   final Widget child;
@@ -15,34 +21,17 @@ class AppLockGate extends ConsumerStatefulWidget {
   ConsumerState<AppLockGate> createState() => _AppLockGateState();
 }
 
-class _AppLockGateState extends ConsumerState<AppLockGate>
-    with WidgetsBindingObserver {
+class _AppLockGateState extends ConsumerState<AppLockGate> {
   bool _unlocked = true;
   bool _authenticating = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     final enabled = ref.read(settingsControllerProvider).appLockEnabled;
     if (enabled) {
       _unlocked = false;
       WidgetsBinding.instance.addPostFrameCallback((_) => _authenticate());
-    }
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Re-lock when the app leaves the foreground.
-    if (state == AppLifecycleState.paused) {
-      final enabled = ref.read(settingsControllerProvider).appLockEnabled;
-      if (enabled && mounted) setState(() => _unlocked = false);
     }
   }
 

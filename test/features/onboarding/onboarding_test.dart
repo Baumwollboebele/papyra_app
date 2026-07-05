@@ -10,6 +10,7 @@ import '../../support/harness.dart';
 
 void main() {
   Future<void> pumpApp(WidgetTester tester, InMemorySettingsStore store) {
+    useGermanLocale(tester);
     return tester.pumpWidget(
       ProviderScope(
         overrides: [

@@ -48,7 +48,16 @@ class PapyraApp extends ConsumerWidget {
       themeMode: themeMode,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      locale: const Locale('de'),
+      // Follow the device language when it is one we ship (de, en, fr, it, tr);
+      // otherwise fall back to English rather than the first listed locale.
+      localeResolutionCallback: (deviceLocale, supported) {
+        if (deviceLocale != null) {
+          for (final locale in supported) {
+            if (locale.languageCode == deviceLocale.languageCode) return locale;
+          }
+        }
+        return const Locale('en');
+      },
       routerConfig: router,
       builder: (context, child) => ShareIntentListener(
         child: AppLockGate(child: child ?? const SizedBox()),

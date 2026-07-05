@@ -12,7 +12,7 @@ Project conventions, common commands, and an architecture summary for anyone (hu
 - **Fully offline.** No runtime network calls anywhere. Android build must not request the `INTERNET` permission.
 - **Privacy first.** No data collection of any kind. Everything stays on device.
 - **One codebase, iOS + Android.** Latest stable Flutter, Dart 3, sound null safety.
-- **German-first, fully localized.** All user-facing strings via `gen_l10n`. Base locale `de`, second locale `en`. **No hardcoded UI strings.**
+- **German-first, fully localized.** All user-facing strings via `gen_l10n`. Base/template locale `de`; also shipped: `en`, `fr`, `it`, `tr`. The app follows the device language and falls back to English for unsupported languages (see `main.dart` `localeResolutionCallback`). **No hardcoded UI strings.** When adding a string, add the key to **every** `app_*.arb` file.
 
 ## Toolchain
 

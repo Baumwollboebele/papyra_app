@@ -11,6 +11,7 @@ void main() {
   testWidgets('App boots into the shell once onboarding is complete', (
     tester,
   ) async {
+    useGermanLocale(tester);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

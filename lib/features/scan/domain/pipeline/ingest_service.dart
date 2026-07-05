@@ -88,12 +88,18 @@ class IngestService {
         } else if (_isPdf(file)) {
           items.add(await _pdfItem(file, source));
         } else {
-          items.add(_failed(file, 'Dieser Dateityp wird nicht unterstützt.'));
+          items.add(
+            _failed(file, source, 'Dieser Dateityp wird nicht unterstützt.'),
+          );
         }
       } on StorageException catch (e) {
-        items.add(_failed(file, 'Speichern fehlgeschlagen: ${e.message}'));
+        items.add(
+          _failed(file, source, 'Speichern fehlgeschlagen: ${e.message}'),
+        );
       } catch (_) {
-        items.add(_failed(file, 'Die Datei konnte nicht gelesen werden.'));
+        items.add(
+          _failed(file, source, 'Die Datei konnte nicht gelesen werden.'),
+        );
       }
     }
     return items;
@@ -107,14 +113,15 @@ class IngestService {
       f.mimeType?.toLowerCase() == 'application/pdf' ||
       f.path.toLowerCase().endsWith('.pdf');
 
-  IngestItem _failed(IngestFile file, String message) => IngestItem(
-    id: uniqueId(),
-    source: IngestSource.share,
-    pageImagePaths: const [],
-    displayName: file.name,
-    status: IngestStatus.failed,
-    errorMessage: message,
-  );
+  IngestItem _failed(IngestFile file, IngestSource source, String message) =>
+      IngestItem(
+        id: uniqueId(),
+        source: source,
+        pageImagePaths: const [],
+        displayName: file.name,
+        status: IngestStatus.failed,
+        errorMessage: message,
+      );
 
   Future<IngestItem> _imageItem(IngestFile file, IngestSource source) async {
     final stored = await _files.importPage(file.path);
@@ -129,7 +136,7 @@ class IngestService {
   Future<IngestItem> _pdfItem(IngestFile file, IngestSource source) async {
     final bytes = await _files.readBytes(file.path);
     if (!isPdf(bytes)) {
-      return _failed(file, 'Die Datei ist keine gültige PDF.');
+      return _failed(file, source, 'Die Datei ist keine gültige PDF.');
     }
     final hasText = pdfHasTextLayer(bytes);
     // Keep the original PDF untouched (no lossy re-render).
@@ -143,13 +150,14 @@ class IngestService {
       await _files.deleteAll([originalPdf, ...pages]);
       return _failed(
         file,
+        source,
         'Das PDF konnte nicht verarbeitet werden '
         '(möglicherweise passwortgeschützt oder beschädigt).',
       );
     }
     if (pages.isEmpty) {
       await _files.deleteAll([originalPdf]);
-      return _failed(file, 'Das PDF enthält keine lesbaren Seiten.');
+      return _failed(file, source, 'Das PDF enthält keine lesbaren Seiten.');
     }
     return IngestItem(
       id: uniqueId(),

@@ -188,7 +188,8 @@ files/papyra/pdfs/…        generated PDFs
 ## Package decisions
 
 - **`freezed`** is pinned to a stable `^3.1.0` (matching `freezed_annotation ^3.1.0`); `flutter pub add` had resolved a `-dev` prerelease, which is unsuitable for a production build.
-- **`file_selector`** (Apache-2.0, flutter.dev) was added for the backup **restore** file picker — the only capability the listed stack did not cover. It is free, permissive and offline.
+- **`file_selector`** (Apache-2.0, flutter.dev) is used for the backup **restore** file picker and for **manual import** of existing PDFs/images — the closest maintained free equivalent to `file_picker`/`image_picker`, already in the project, so no extra dependency was needed. Free, permissive, offline.
+- **`receive_sharing_intent`** (Apache-2.0) makes the app a share target / file handler; **`flutter_local_notifications` + `timezone`** power on-device due-date reminders (no `flutter_timezone` needed — a local `DateTime` converted via `tz.local`/UTC preserves the intended wall-clock time).
 - **`sqlite3_flutter_libs`** currently resolves to `0.6.0+eol`; it still works and bundles SQLite with FTS5. Revisit if a maintained successor ships.
 - The searchable-PDF text layer embeds the bundled Inter font for full German coverage, with a safe fallback to the built-in Latin-1 font.
 

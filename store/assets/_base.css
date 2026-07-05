@@ -1,0 +1,61 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 2160px; overflow: hidden;
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+.wrap { width: 1080px; height: 2160px; position: relative;
+  background: radial-gradient(120% 90% at 50% -10%, #00897B 0%, #00695C 45%, #004D40 100%);
+  overflow: hidden; }
+.blob { position: absolute; border-radius: 50%; background: #fff; opacity: .06; }
+.bA { width: 560px; height: 560px; right: -180px; top: 120px; }
+.bB { width: 420px; height: 420px; left: -160px; top: 620px; opacity: .05; }
+
+.cap { position: absolute; top: 120px; left: 0; width: 1080px; text-align: center; padding: 0 90px; }
+.cap h1 { color: #fff; font-size: 64px; font-weight: 800; line-height: 1.12; letter-spacing: -.5px; }
+.cap p { color: #B2DFDB; font-size: 30px; font-weight: 500; margin-top: 18px; }
+
+/* device */
+.device { position: absolute; left: 165px; top: 430px; width: 750px; height: 1560px;
+  background: #0c1411; border-radius: 66px; padding: 16px;
+  box-shadow: 0 40px 90px rgba(0,0,0,.45); }
+.screen { width: 100%; height: 100%; background: #F4FBF8; border-radius: 52px; overflow: hidden;
+  position: relative; display: flex; flex-direction: column; }
+
+.status { height: 46px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 34px; font-size: 22px; font-weight: 700; color: #17211E; background: #F4FBF8; }
+.status .dots { display: flex; gap: 7px; align-items: center; }
+.status .dots i { width: 20px; height: 20px; display: inline-block; }
+
+.appbar { background: #00695C; padding: 22px 30px 24px; display: flex; align-items: center;
+  justify-content: space-between; }
+.appbar .t { color: #fff; font-size: 34px; font-weight: 700; }
+.appbar .a { display: flex; gap: 18px; }
+
+.body { flex: 1; overflow: hidden; padding: 26px 28px 0; }
+.section { font-size: 24px; font-weight: 700; color: #00695C; margin: 8px 4px 16px; }
+
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 30px; }
+.cat { background: #fff; border-radius: 22px; padding: 22px 20px; box-shadow: 0 3px 12px rgba(0,0,0,.06); }
+.catIcon { width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center;
+  justify-content: center; margin-bottom: 16px; }
+.catName { font-size: 25px; font-weight: 700; color: #17211E; }
+.catCount { font-size: 19px; color: #6b7a75; margin-top: 4px; }
+
+.doc { background: #fff; border-radius: 20px; padding: 20px; display: flex; align-items: center;
+  gap: 18px; box-shadow: 0 3px 12px rgba(0,0,0,.06); margin-bottom: 16px; }
+.thumb { width: 62px; height: 78px; border-radius: 10px; background: #E0F2F1; flex: none;
+  display: flex; align-items: center; justify-content: center; }
+.doc .m { flex: 1; min-width: 0; }
+.doc .title { font-size: 25px; font-weight: 700; color: #17211E; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; }
+.doc .sub { font-size: 20px; color: #6b7a75; margin-top: 5px; }
+.doc .amt { font-size: 24px; font-weight: 800; color: #00695C; }
+
+.nav { height: 108px; background: #fff; border-top: 1px solid #E4EEEA; display: flex;
+  align-items: center; justify-content: space-around; }
+.nav .item { display: flex; flex-direction: column; align-items: center; gap: 6px;
+  font-size: 18px; font-weight: 600; color: #8a9793; }
+.nav .item.on { color: #00695C; }
+.fab { position: absolute; right: 34px; bottom: 132px; width: 92px; height: 92px; border-radius: 28px;
+  background: #00695C; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 12px 28px rgba(0,105,92,.5); }
+.chip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 999px;
+  font-size: 22px; font-weight: 700; }

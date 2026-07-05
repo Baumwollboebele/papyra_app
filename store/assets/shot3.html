@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="_base.css">
+<style>
+  .searchbar { background:#fff; border-radius:20px; box-shadow:0 3px 12px rgba(0,0,0,.06);
+    padding:20px 24px; display:flex; align-items:center; gap:16px; margin-bottom:22px; }
+  .searchbar .q { font-size:27px; font-weight:600; color:#17211E; }
+  .searchbar .cur { width:3px; height:30px; background:#00695C; display:inline-block; animation:none; }
+  .filters { display:flex; gap:12px; margin-bottom:24px; }
+  .fchip { background:#E0F2F1; color:#00695C; font-size:20px; font-weight:700; padding:11px 20px; border-radius:999px; }
+  .fchip.ghost { background:#fff; color:#6b7a75; box-shadow:0 2px 8px rgba(0,0,0,.05); }
+  .hl { background:#FFE9A8; border-radius:5px; padding:0 4px; }
+  .count { font-size:22px; font-weight:700; color:#6b7a75; margin:2px 4px 16px; }
+</style></head>
+<body>
+<div class="wrap">
+  <div class="blob bA"></div><div class="blob bB"></div>
+  <div class="cap"><h1>Alles durchsuchbar,<br>in Sekunden</h1>
+    <p>Titel, Absender, Schlagwörter & Text</p></div>
+
+  <div class="device"><div class="screen">
+    <div class="status"><span>9:41</span><span class="dots">▲ ● ▮</span></div>
+    <div class="appbar"><div class="searchbar" style="flex:1;margin:0;box-shadow:none;background:#fff">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00695C" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+      <span class="q">stadtwerke</span><span style="flex:1"></span>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9aa8a3" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg></div></div>
+    <div class="body">
+      <div class="filters">
+        <div class="fchip">Alle Kategorien ▾</div>
+        <div class="fchip ghost">★ Favoriten</div>
+        <div class="fchip ghost">Zeitraum</div>
+      </div>
+      <div class="count">2 Treffer</div>
+      <div class="doc"><div class="thumb"><svg width="30" height="38" viewBox="0 0 24 30" fill="#00695C"><rect x="2" y="1" width="20" height="28" rx="3"/><rect x="6" y="7" width="12" height="2" fill="#fff"/><rect x="6" y="12" width="12" height="2" fill="#fff"/><rect x="6" y="17" width="9" height="2" fill="#fff"/></svg></div>
+        <div class="m"><div class="title"><span class="hl">Stadtwerke</span> – Stromrechnung</div><div class="sub">12.03.2026 · Rechnungen</div></div>
+        <div class="amt">89,90 €</div></div>
+      <div class="doc"><div class="thumb"><svg width="30" height="38" viewBox="0 0 24 30" fill="#00695C"><rect x="2" y="1" width="20" height="28" rx="3"/><rect x="6" y="7" width="12" height="2" fill="#fff"/><rect x="6" y="12" width="12" height="2" fill="#fff"/><rect x="6" y="17" width="9" height="2" fill="#fff"/></svg></div>
+        <div class="m"><div class="title"><span class="hl">Stadtwerke</span> – Wasser 2025</div><div class="sub">30.11.2025 · Rechnungen</div></div>
+        <div class="amt">64,20 €</div></div>
+      <div style="font-size:21px;color:#8a9793;text-align:center;margin-top:36px;line-height:1.5">Findet Treffer sogar im<br>erkannten Dokumenttext – auch offline.</div>
+    </div>
+    <div class="nav">
+      <div class="item"><svg width="30" height="30" viewBox="0 0 24 24" fill="#8a9793"><path d="M3 5h7l2 2h9v12H3z"/></svg>Ablage</div>
+      <div class="item"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8a9793" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Fällig</div>
+      <div class="item on"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#00695C" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>Suche</div>
+      <div class="item"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8a9793" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M4 12h2M18 12h2M12 4v2M12 18v2"/></svg>Mehr</div>
+    </div>
+  </div></div>
+</div>
+</body></html>

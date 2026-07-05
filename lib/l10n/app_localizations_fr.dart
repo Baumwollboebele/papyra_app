@@ -485,6 +485,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeDark => 'Sombre';
 
   @override
+  String get setLanguage => 'Langue';
+
+  @override
+  String get languageSystem => 'Langue du système';
+
+  @override
   String get setFiling => 'Reconnaissance et titres';
 
   @override

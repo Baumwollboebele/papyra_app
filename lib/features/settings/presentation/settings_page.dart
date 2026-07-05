@@ -13,6 +13,24 @@ import '../../../core/services/share_service.dart';
 import 'category_management_page.dart';
 import 'privacy_page.dart';
 
+/// Languages the app ships, keyed by locale code and shown in their own name
+/// (autonyms). Autonyms are identical in every UI locale, so they are not part
+/// of the translated string table. Keep in sync with `supportedLocales`.
+const Map<String, String> kSupportedLanguages = {
+  'de': 'Deutsch',
+  'en': 'English',
+  'fr': 'Français',
+  'it': 'Italiano',
+  'tr': 'Türkçe',
+};
+
+/// Result of the language picker; wraps a nullable code so "system default"
+/// (null) is distinguishable from "dialog dismissed".
+class _LanguageChoice {
+  const _LanguageChoice(this.code);
+  final String? code;
+}
+
 /// App settings: security, appearance, data (categories, backup) and about.
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -165,6 +183,47 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     }
   }
 
+  Future<void> _pickLanguage() async {
+    final l10n = context.l10n;
+    final current = ref.read(settingsControllerProvider).localeOverride;
+    // Options: system default, then each shipped language in its own name.
+    final entries = <MapEntry<String?, String>>[
+      MapEntry(null, l10n.languageSystem),
+      ...kSupportedLanguages.entries.map((e) => MapEntry(e.key, e.value)),
+    ];
+    final result = await showDialog<_LanguageChoice>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.setLanguage),
+        children: [
+          for (final entry in entries)
+            SimpleDialogOption(
+              onPressed: () =>
+                  Navigator.of(context).pop(_LanguageChoice(entry.key)),
+              child: Row(
+                children: [
+                  Icon(
+                    entry.key == current
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(entry.value),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+    if (result != null) {
+      await ref
+          .read(settingsControllerProvider.notifier)
+          .setLocaleOverride(result.code);
+    }
+  }
+
   Future<void> _editTitleTemplate() async {
     final l10n = context.l10n;
     final controller = TextEditingController(
@@ -256,6 +315,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       .read(settingsControllerProvider.notifier)
                       .setThemeMode(s.first),
                 ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.language),
+                title: Text(l10n.setLanguage),
+                subtitle: Text(
+                  kSupportedLanguages[settings.localeOverride] ??
+                      l10n.languageSystem,
+                ),
+                trailing: const Icon(Icons.edit_outlined),
+                onTap: _pickLanguage,
               ),
               const Divider(height: 1),
               _SectionHeader(l10n.setFiling),

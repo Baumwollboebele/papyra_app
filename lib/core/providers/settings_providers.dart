@@ -51,4 +51,9 @@ class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setReminderOnDueDate(bool value) =>
       _persist(state.copyWith(reminderOnDueDate: value));
+
+  /// Sets the UI language ('de', 'en', 'fr', 'it', 'tr'), or null to follow
+  /// the device language.
+  Future<void> setLocaleOverride(String? code) =>
+      _persist(state.copyWith(localeOverride: code));
 }

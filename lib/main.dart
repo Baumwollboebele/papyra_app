@@ -40,6 +40,9 @@ class PapyraApp extends ConsumerWidget {
     final themeMode = ref.watch(
       settingsControllerProvider.select((s) => s.themeMode),
     );
+    final localeOverride = ref.watch(
+      settingsControllerProvider.select((s) => s.localeOverride),
+    );
     return MaterialApp.router(
       onGenerateTitle: (context) => AppLocalizations.of(context).appName,
       debugShowCheckedModeBanner: false,
@@ -48,6 +51,9 @@ class PapyraApp extends ConsumerWidget {
       themeMode: themeMode,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+      // Null = follow the device language; a value pins the UI to the language
+      // the user picked in Settings.
+      locale: localeOverride == null ? null : Locale(localeOverride),
       // Follow the device language when it is one we ship (de, en, fr, it, tr);
       // otherwise fall back to English rather than the first listed locale.
       localeResolutionCallback: (deviceLocale, supported) {

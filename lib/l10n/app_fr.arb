@@ -153,6 +153,8 @@
   "themeSystem": "Système",
   "themeLight": "Clair",
   "themeDark": "Sombre",
+  "setLanguage": "Langue",
+  "languageSystem": "Langue du système",
   "setFiling": "Reconnaissance et titres",
   "setTitleTemplate": "Modèle de titre",
   "setTitleTemplateHint": "Espaces réservés : sender, docType, date",

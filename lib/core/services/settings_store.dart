@@ -17,11 +17,16 @@ class AppSettings {
     this.reminderEnabled = true,
     this.reminderLeadDays = 3,
     this.reminderOnDueDate = false,
+    this.localeOverride,
   });
 
   final ThemeMode themeMode;
   final bool appLockEnabled;
   final bool onboardingCompleted;
+
+  /// Language code the user explicitly chose ('de', 'en', 'fr', 'it', 'tr').
+  /// Null means "follow the device language".
+  final String? localeOverride;
 
   /// Template for auto-generated document titles ({sender}/{docType}/{date}).
   final String titleTemplate;
@@ -47,6 +52,9 @@ class AppSettings {
     bool? reminderEnabled,
     int? reminderLeadDays,
     bool? reminderOnDueDate,
+    // Sentinel default so callers can pass `null` to reset to the system
+    // language (a plain `String?` couldn't distinguish "unset" from "clear").
+    Object? localeOverride = _unset,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -58,8 +66,13 @@ class AppSettings {
       reminderEnabled: reminderEnabled ?? this.reminderEnabled,
       reminderLeadDays: reminderLeadDays ?? this.reminderLeadDays,
       reminderOnDueDate: reminderOnDueDate ?? this.reminderOnDueDate,
+      localeOverride: identical(localeOverride, _unset)
+          ? this.localeOverride
+          : localeOverride as String?,
     );
   }
+
+  static const Object _unset = Object();
 
   @override
   bool operator ==(Object other) =>
@@ -71,7 +84,8 @@ class AppSettings {
       other.autoAcceptHighConfidence == autoAcceptHighConfidence &&
       other.reminderEnabled == reminderEnabled &&
       other.reminderLeadDays == reminderLeadDays &&
-      other.reminderOnDueDate == reminderOnDueDate;
+      other.reminderOnDueDate == reminderOnDueDate &&
+      other.localeOverride == localeOverride;
 
   @override
   int get hashCode => Object.hash(
@@ -83,6 +97,7 @@ class AppSettings {
     reminderEnabled,
     reminderLeadDays,
     reminderOnDueDate,
+    localeOverride,
   );
 }
 
@@ -107,6 +122,7 @@ class SecureSettingsStore implements SettingsStore {
   static const _kReminderEnabled = 'settings.reminderEnabled';
   static const _kReminderLeadDays = 'settings.reminderLeadDays';
   static const _kReminderOnDueDate = 'settings.reminderOnDueDate';
+  static const _kLocaleOverride = 'settings.localeOverride';
 
   @override
   Future<AppSettings> load() async {
@@ -118,6 +134,7 @@ class SecureSettingsStore implements SettingsStore {
     final reminderEnabled = await _storage.read(key: _kReminderEnabled);
     final leadDays = await _storage.read(key: _kReminderLeadDays);
     final onDueDate = await _storage.read(key: _kReminderOnDueDate);
+    final locale = await _storage.read(key: _kLocaleOverride);
     return AppSettings(
       themeMode: _themeFromString(theme),
       appLockEnabled: appLock == 'true',
@@ -129,6 +146,7 @@ class SecureSettingsStore implements SettingsStore {
       reminderEnabled: reminderEnabled != 'false',
       reminderLeadDays: int.tryParse(leadDays ?? '') ?? 3,
       reminderOnDueDate: onDueDate == 'true',
+      localeOverride: (locale == null || locale.isEmpty) ? null : locale,
     );
   }
 
@@ -159,6 +177,10 @@ class SecureSettingsStore implements SettingsStore {
     await _storage.write(
       key: _kReminderOnDueDate,
       value: settings.reminderOnDueDate.toString(),
+    );
+    await _storage.write(
+      key: _kLocaleOverride,
+      value: settings.localeOverride ?? '',
     );
   }
 

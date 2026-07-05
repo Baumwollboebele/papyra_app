@@ -166,6 +166,8 @@
   "themeSystem": "System",
   "themeLight": "Hell",
   "themeDark": "Dunkel",
+  "setLanguage": "Sprache",
+  "languageSystem": "Systemsprache",
   "setFiling": "Erkennung & Titel",
   "setTitleTemplate": "Titel-Vorlage",
   "setTitleTemplateHint": "Platzhalter: sender, docType, date",

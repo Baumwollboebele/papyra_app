@@ -485,6 +485,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get themeDark => 'Koyu';
 
   @override
+  String get setLanguage => 'Dil';
+
+  @override
+  String get languageSystem => 'Sistem dili';
+
+  @override
   String get setFiling => 'Tanıma ve başlıklar';
 
   @override

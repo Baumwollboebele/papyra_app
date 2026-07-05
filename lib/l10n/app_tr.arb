@@ -153,6 +153,8 @@
   "themeSystem": "Sistem",
   "themeLight": "Açık",
   "themeDark": "Koyu",
+  "setLanguage": "Dil",
+  "languageSystem": "Sistem dili",
   "setFiling": "Tanıma ve başlıklar",
   "setTitleTemplate": "Başlık şablonu",
   "setTitleTemplateHint": "Yer tutucular: sender, docType, date",

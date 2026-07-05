@@ -153,6 +153,8 @@
   "themeSystem": "System",
   "themeLight": "Light",
   "themeDark": "Dark",
+  "setLanguage": "Language",
+  "languageSystem": "System language",
   "setFiling": "Recognition & titles",
   "setTitleTemplate": "Title template",
   "setTitleTemplateHint": "Placeholders: sender, docType, date",

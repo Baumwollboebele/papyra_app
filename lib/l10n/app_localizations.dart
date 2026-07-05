@@ -932,6 +932,18 @@ abstract class AppLocalizations {
   /// **'Dunkel'**
   String get themeDark;
 
+  /// No description provided for @setLanguage.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprache'**
+  String get setLanguage;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In de, this message translates to:
+  /// **'Systemsprache'**
+  String get languageSystem;
+
   /// No description provided for @setFiling.
   ///
   /// In de, this message translates to:

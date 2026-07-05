@@ -385,49 +385,64 @@ class DocumentRepository {
 
   // --- Search ----------------------------------------------------------------
 
-  /// Full-text search with optional [filters]. Ranked by BM25.
+  /// Full-text search with optional [filters]. Ranked by BM25. One-shot.
   Future<List<Document>> search(
     String rawQuery, {
     SearchFilters filters = const SearchFilters(),
   }) async {
+    final rows = await _searchSelectable(rawQuery, filters).get();
+    return rows.map((r) => _db.documents.map(r.data)).toList();
+  }
+
+  /// Reactive full-text search: re-emits whenever documents change, so results
+  /// stay up to date while the search screen is open.
+  Stream<List<Document>> watchSearch(
+    String rawQuery, {
+    SearchFilters filters = const SearchFilters(),
+  }) {
+    return _searchSelectable(rawQuery, filters).watch().map(
+      (rows) => rows.map((r) => _db.documents.map(r.data)).toList(),
+    );
+  }
+
+  /// Builds the query for [search]/[watchSearch]: FTS MATCH when there are
+  /// usable query terms, otherwise a filter-only browse (empty filters +
+  /// no query yield no rows).
+  Selectable<QueryRow> _searchSelectable(
+    String rawQuery,
+    SearchFilters filters,
+  ) {
     final match = _toFtsQuery(rawQuery);
     if (match == null) {
-      // No usable query terms: fall back to filter-only browsing.
-      return _searchFiltersOnly(filters);
+      if (filters.isEmpty) {
+        return _db.customSelect(
+          'SELECT d.* FROM documents d WHERE 0 = 1',
+          readsFrom: {_db.documents},
+        );
+      }
+      final where = StringBuffer('1 = 1');
+      final vars = <Variable>[];
+      _appendFilters(where, vars, filters, tableAlias: 'd');
+      return _db.customSelect(
+        'SELECT d.* FROM documents d WHERE $where ORDER BY d.created_at DESC',
+        variables: vars,
+        readsFrom: {_db.documents},
+      );
     }
 
     final where = StringBuffer('documents_fts MATCH ?');
     final vars = <Variable>[Variable.withString(match)];
     _appendFilters(where, vars, filters, tableAlias: 'd');
-
-    final rows = await _db
-        .customSelect(
-          '''
+    return _db.customSelect(
+      '''
       SELECT d.* FROM documents_fts f
       JOIN documents d ON d.id = f.rowid
       WHERE $where
       ORDER BY bm25(documents_fts), d.created_at DESC
       ''',
-          variables: vars,
-          readsFrom: {_db.documents},
-        )
-        .get();
-    return rows.map((r) => _db.documents.map(r.data)).toList();
-  }
-
-  Future<List<Document>> _searchFiltersOnly(SearchFilters filters) async {
-    if (filters.isEmpty) return [];
-    final where = StringBuffer('1 = 1');
-    final vars = <Variable>[];
-    _appendFilters(where, vars, filters, tableAlias: 'd');
-    final rows = await _db
-        .customSelect(
-          'SELECT d.* FROM documents d WHERE $where ORDER BY d.created_at DESC',
-          variables: vars,
-          readsFrom: {_db.documents},
-        )
-        .get();
-    return rows.map((r) => _db.documents.map(r.data)).toList();
+      variables: vars,
+      readsFrom: {_db.documents},
+    );
   }
 
   void _appendFilters(

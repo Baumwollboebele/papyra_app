@@ -28,13 +28,18 @@ class SearchFiltersNotifier extends Notifier<SearchFilters> {
   void clear() => state = const SearchFilters();
 }
 
-/// FTS results for the current query + filters. Empty when there is nothing to
-/// search for (no query and no active filter).
-final searchResultsProvider = FutureProvider<List<Document>>((ref) async {
+/// FTS results for the current query + filters, reactive: updates live as
+/// documents are added/edited/removed. Empty when there is nothing to search
+/// for (no query and no active filter).
+final searchResultsProvider = StreamProvider<List<Document>>((ref) {
   final query = ref.watch(searchQueryProvider);
   final filters = ref.watch(searchFiltersProvider);
-  if (query.trim().isEmpty && filters.isEmpty) return const [];
-  return ref.read(documentRepositoryProvider).search(query, filters: filters);
+  if (query.trim().isEmpty && filters.isEmpty) {
+    return Stream.value(const []);
+  }
+  return ref
+      .watch(documentRepositoryProvider)
+      .watchSearch(query, filters: filters);
 });
 
 /// In-session recent searches (most recent first, capped).

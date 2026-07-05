@@ -79,8 +79,7 @@ void main() {
     expect(await docs.search('kfz'), hasLength(1));
   });
 
-  test('empty query with showAll returns every document (browse all)',
-      () async {
+  test('empty query with showAll returns every document (browse all)', () async {
     await insertSample(title: 'Rechnung A');
     await insertSample(title: 'Egal', categoryId: steuernId, tags: []);
     // No text query, no category -> "Alle Kategorien" browse shows everything.
@@ -91,6 +90,20 @@ void main() {
     expect(all, hasLength(2));
     // Pristine empty filters still return nothing.
     expect(await docs.search('', filters: const SearchFilters()), isEmpty);
+  });
+
+  test('watchSearch emits again when a matching document is added', () async {
+    final counts = <int>[];
+    final sub = docs
+        .watchSearch('stadtwerke')
+        .listen((r) => counts.add(r.length));
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    await insertSample(); // OCR contains "Stadtwerke"
+    await Future<void>.delayed(const Duration(milliseconds: 40));
+    await sub.cancel();
+
+    expect(counts.first, 0); // nothing before the insert
+    expect(counts.last, 1); // updated live after the insert
   });
 
   test('search honors category and favorite filters', () async {

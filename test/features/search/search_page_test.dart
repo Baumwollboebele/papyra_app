@@ -11,6 +11,7 @@ import 'package:paperless/core/database/repositories/document_repository.dart';
 import 'package:paperless/core/providers/database_providers.dart';
 import 'package:paperless/features/library/presentation/document_list_tile.dart';
 import 'package:paperless/features/search/presentation/search_page.dart';
+import 'package:paperless/features/search/presentation/search_providers.dart';
 import 'package:paperless/l10n/app_localizations.dart';
 
 Widget _wrap(AppDatabase db) {
@@ -22,6 +23,19 @@ Widget _wrap(AppDatabase db) {
       categoriesProvider.overrideWith(
         (ref) => const Stream<List<Category>>.empty(),
       ),
+      // Use the one-shot search() wrapped in a plain stream so the widget test
+      // stays deterministic (the reactive drift stream is covered by the
+      // document_repository watchSearch test).
+      searchResultsProvider.overrideWith((ref) {
+        final query = ref.watch(searchQueryProvider);
+        final filters = ref.watch(searchFiltersProvider);
+        if (query.trim().isEmpty && filters.isEmpty) {
+          return Stream.value(const <Document>[]);
+        }
+        return Stream.fromFuture(
+          ref.read(documentRepositoryProvider).search(query, filters: filters),
+        );
+      }),
     ],
     child: const MaterialApp(
       locale: Locale('de'),
@@ -62,22 +76,21 @@ void main() {
 
   tearDown(() => db.close());
 
-  Future<void> pumpFrames(WidgetTester tester) async {
-    for (var i = 0; i < 6; i++) {
-      await tester.pump(const Duration(milliseconds: 120));
-    }
-  }
-
   testWidgets('shows the hint before any query', (tester) async {
     await tester.pumpWidget(_wrap(db));
     await tester.pump();
     expect(find.textContaining('Suche in Titeln'), findsOneWidget);
   });
 
+  Future<void> pumpFrames(WidgetTester tester) async {
+    for (var i = 0; i < 6; i++) {
+      await tester.pump(const Duration(milliseconds: 120));
+    }
+  }
+
   testWidgets('typing a query shows matching results', (tester) async {
     await tester.pumpWidget(_wrap(db));
     await tester.pump();
-
     await tester.enterText(find.byKey(_searchField), 'strom');
     await pumpFrames(tester);
 
@@ -90,7 +103,6 @@ void main() {
   ) async {
     await tester.pumpWidget(_wrap(db));
     await tester.pump();
-
     await tester.enterText(find.byKey(_searchField), 'xyznichtvorhanden');
     await pumpFrames(tester);
 

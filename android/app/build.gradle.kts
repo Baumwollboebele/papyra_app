@@ -6,7 +6,8 @@ plugins {
 
 android {
     namespace = "com.example.paperless"
-    compileSdk = flutter.compileSdkVersion
+    // receive_sharing_intent requires compileSdk 37 (> Flutter's default 36).
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

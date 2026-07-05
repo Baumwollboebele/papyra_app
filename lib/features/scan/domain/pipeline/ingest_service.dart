@@ -6,6 +6,7 @@ import '../../../../core/database/default_categories.dart';
 import '../../../../core/database/repositories/category_repository.dart';
 import '../../../../core/database/repositories/document_repository.dart';
 import '../../../../core/database/repositories/group_repository.dart';
+import '../../../../core/database/repositories/learning_repository.dart';
 import '../../../../core/services/file_service.dart';
 import '../../../../core/services/ocr_service.dart';
 import '../../../../core/services/pdf_rasterizer.dart';
@@ -14,6 +15,7 @@ import '../../../../core/services/thumbnail_service.dart';
 import '../../../../core/utils/ids.dart';
 import '../classification/document_classifier.dart';
 import '../classification/metadata_extractor.dart';
+import '../classification/title_generator.dart';
 import 'ingest_models.dart';
 import 'pdf_text_layer.dart';
 import 'scan_models.dart';
@@ -33,6 +35,7 @@ class IngestService {
     required CategoryRepository categoryRepository,
     required GroupRepository groupRepository,
     required DocumentRepository documentRepository,
+    required LearningRepository learningRepository,
     Future<Uint8List?> Function()? fontLoader,
   }) : _files = fileService,
        _ocr = ocrService,
@@ -42,6 +45,7 @@ class IngestService {
        _categories = categoryRepository,
        _groups = groupRepository,
        _documents = documentRepository,
+       _learning = learningRepository,
        _fontLoader = fontLoader;
 
   final FileService _files;
@@ -52,6 +56,7 @@ class IngestService {
   final CategoryRepository _categories;
   final GroupRepository _groups;
   final DocumentRepository _documents;
+  final LearningRepository _learning;
   final Future<Uint8List?> Function()? _fontLoader;
 
   static const _imageMimes = {'image/jpeg', 'image/jpg', 'image/png'};
@@ -160,7 +165,10 @@ class IngestService {
 
   /// OCRs the pages, classifies, extracts metadata and suggests a group.
   /// On OCR failure the item is still `ready` with a safe fallback draft.
-  Future<IngestItem> process(IngestItem item) async {
+  Future<IngestItem> process(
+    IngestItem item, {
+    String titleTemplate = kDefaultTitleTemplate,
+  }) async {
     if (item.status == IngestStatus.failed) return item;
     try {
       final texts = await _ocr.recognizePages(item.pageImagePaths);
@@ -170,12 +178,19 @@ class IngestService {
       final idByKey = {for (final c in categories) c.key: c.id};
       final fallbackId = idByKey[CategoryKeys.sonstiges] ?? categories.first.id;
 
+      // Local learning: does this sender already have a remembered category?
+      final learnedKey = await _learning.lookup(
+        _extractor.extract(combined).sender,
+      );
+
       final result = buildProcessingResult(
         combinedText: combined,
         classifier: _classifier,
         extractor: _extractor,
         categoryIdByKey: idByKey,
         fallbackCategoryId: fallbackId,
+        titleTemplate: titleTemplate,
+        learnedCategoryKey: learnedKey,
       );
       final suggestedGroupId = await _groups.suggestGroupId(
         result.draft.categoryId,
@@ -247,7 +262,7 @@ class IngestService {
       final thumbPath = await _files.writeThumbnail(thumbBytes);
       written.add(thumbPath);
 
-      return await _documents.insertDocument(
+      final id = await _documents.insertDocument(
         DocumentDraft(
           title: draft.title,
           categoryId: draft.categoryId,
@@ -263,6 +278,13 @@ class IngestService {
           groupId: draft.groupId,
         ),
       );
+
+      // Local learning: remember the confirmed sender → category mapping.
+      if (draft.sender != null && draft.sender!.trim().isNotEmpty) {
+        final category = await _categories.getById(draft.categoryId);
+        await _learning.recordChoice(draft.sender, category.key);
+      }
+      return id;
     } catch (_) {
       await _files.deleteAll(written);
       rethrow;

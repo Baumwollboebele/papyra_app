@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:paperless/core/database/default_categories.dart';
 import 'package:paperless/features/scan/domain/classification/metadata_extractor.dart';
 import 'package:paperless/features/scan/domain/classification/rule_based_classifier.dart';
+import 'package:paperless/features/scan/domain/classification/scoring.dart';
 import 'package:paperless/features/scan/domain/pipeline/scan_processing.dart';
 
 void main() {
@@ -41,7 +42,9 @@ IBAN DE89 3704 0044 0532 0130 00
       expect(r.draft.documentDate, DateTime(2026, 3, 12));
       expect(r.draft.amountCents, 8990);
       expect(r.draft.iban, 'DE89370400440532013000');
-      expect(r.draft.title, 'Stadtwerke München GmbH');
+      // Title built from the default template {sender} – {docType} – {date}.
+      expect(r.draft.title, 'Stadtwerke München GmbH – Rechnung – 2026-03-12');
+      expect(r.draft.level, isNot(ConfidenceLevel.low));
     },
   );
 

@@ -130,6 +130,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get scanLowConfidence => 'Category uncertain – please check.';
 
   @override
+  String get confidenceHigh => 'Recognized confidently';
+
+  @override
+  String get confidenceMedium => 'Please check the category';
+
+  @override
+  String get confidenceLow => 'Category uncertain';
+
+  @override
+  String get altCategoriesLabel => 'Better fit:';
+
+  @override
   String scanSuggested(String category) {
     return 'Suggestion: $category';
   }
@@ -379,6 +391,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => 'Dark';
+
+  @override
+  String get setFiling => 'Recognition & titles';
+
+  @override
+  String get setTitleTemplate => 'Title template';
+
+  @override
+  String get setTitleTemplateHint => 'Placeholders: sender, docType, date';
+
+  @override
+  String get setTitleTemplateReset => 'Restore default';
+
+  @override
+  String get setAutoAccept => 'Auto-save confident documents';
+
+  @override
+  String get setAutoAcceptSubtitle =>
+      'Skip confirmation when confidence is high';
 
   @override
   String get setData => 'Data';

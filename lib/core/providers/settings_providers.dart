@@ -36,4 +36,10 @@ class SettingsController extends Notifier<AppSettings> {
 
   Future<void> completeOnboarding() =>
       _persist(state.copyWith(onboardingCompleted: true));
+
+  Future<void> setTitleTemplate(String template) =>
+      _persist(state.copyWith(titleTemplate: template));
+
+  Future<void> setAutoAcceptHighConfidence(bool value) =>
+      _persist(state.copyWith(autoAcceptHighConfidence: value));
 }

@@ -1,6 +1,9 @@
+import '../../../../core/database/default_categories.dart';
 import '../classification/document_classifier.dart';
 import '../classification/metadata_extractor.dart';
 import '../classification/models.dart';
+import '../classification/scoring.dart';
+import '../classification/title_generator.dart';
 import 'scan_models.dart';
 
 /// Result of processing OCR text: the classification plus a pre-filled draft.
@@ -10,32 +13,62 @@ class ProcessingResult {
   final ConfirmationDraft draft;
 }
 
-/// Pure pipeline step: classify + extract, then build the confirmation draft.
+/// Pure pipeline step: classify (+ optional local-learning boost) + extract,
+/// then build a pre-filled confirmation draft with a smart title, confidence
+/// band and alternative-category suggestions.
 ///
-/// Below the classifier's confidence threshold the selected category falls back
-/// to [fallbackCategoryId] ("Sonstiges") while still recording the suggestion,
-/// so the UI can prompt the user to confirm. No I/O, fully unit-testable.
+/// High/medium confidence pre-selects the suggested category; low confidence
+/// falls back to [fallbackCategoryId] ("Sonstiges") and prompts. No I/O.
 ProcessingResult buildProcessingResult({
   required String combinedText,
   required DocumentClassifier classifier,
   required MetadataExtractor extractor,
   required Map<String, int> categoryIdByKey,
   required int fallbackCategoryId,
+  String titleTemplate = kDefaultTitleTemplate,
+  String? learnedCategoryKey,
 }) {
-  final classification = classifier.classify(combinedText);
+  var classification = classifier.classify(combinedText);
+  // Local learning: a known sender strongly boosts its remembered category.
+  classification = boostForLearnedSender(
+    classification,
+    learnedKey: learnedCategoryKey,
+    fallbackKey: CategoryKeys.sonstiges,
+  );
+
   final metadata = extractor.extract(combinedText);
-  final confident = classification.isConfident(classifier.confidenceThreshold);
+  final level = confidenceLevel(classification.confidence);
 
   final suggestedId =
       categoryIdByKey[classification.bestKey] ?? fallbackCategoryId;
-  final selectedId = confident ? suggestedId : fallbackCategoryId;
+  final selectedId = level == ConfidenceLevel.low
+      ? fallbackCategoryId
+      : suggestedId;
+
+  final effectiveSender = metadata.sender ?? _firstMeaningfulLine(combinedText);
+  final title = generateTitle(
+    template: titleTemplate,
+    sender: effectiveSender,
+    docType: categoryDocType(classification.bestKey),
+    date: metadata.documentDate,
+  );
+
+  final alternativeIds = [
+    for (final key in topAlternativeKeys(
+      classification.scores,
+      exclude: classification.bestKey,
+    ))
+      if (categoryIdByKey[key] != null) categoryIdByKey[key]!,
+  ];
 
   final draft = ConfirmationDraft(
-    title: _deriveTitle(metadata, combinedText),
+    title: title,
     categoryId: selectedId,
     suggestedCategoryId: suggestedId,
     confidence: classification.confidence,
-    lowConfidence: !confident,
+    lowConfidence: level == ConfidenceLevel.low,
+    level: level,
+    alternativeCategoryIds: alternativeIds,
     sender: metadata.sender,
     documentDate: metadata.documentDate,
     amountCents: metadata.amountCents,
@@ -44,13 +77,6 @@ ProcessingResult buildProcessingResult({
   );
 
   return ProcessingResult(classification: classification, draft: draft);
-}
-
-String _deriveTitle(ExtractedMetadata metadata, String text) {
-  final candidate = metadata.titleSuggestion ?? _firstMeaningfulLine(text);
-  if (candidate == null || candidate.trim().isEmpty) return 'Dokument';
-  final trimmed = candidate.trim();
-  return trimmed.length > 80 ? trimmed.substring(0, 80) : trimmed;
 }
 
 String? _firstMeaningfulLine(String text) {

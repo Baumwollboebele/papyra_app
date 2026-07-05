@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/ingest_providers.dart';
+import '../../../core/providers/settings_providers.dart';
 import '../../../core/services/file_service.dart';
+import '../domain/classification/scoring.dart';
 import '../domain/pipeline/ingest_models.dart';
 import '../domain/pipeline/scan_models.dart';
 
@@ -147,14 +149,21 @@ class IngestQueueController extends Notifier<IngestQueueState> {
       currentIndex: index,
       progressLabel: 'Wird verarbeitet …',
     );
+    final settings = ref.read(settingsControllerProvider);
     final processed = await ref
         .read(ingestServiceProvider)
-        .process(state.items[index]);
+        .process(state.items[index], titleTemplate: settings.titleTemplate);
     _replace(index, processed);
     // A processing failure (no draft) -> skip it.
     if (processed.status == IngestStatus.failed || processed.draft == null) {
       state = state.copyWith(currentIndex: index + 1);
       await _advanceToProcessable();
+      return;
+    }
+    // Auto-accept high-confidence documents without confirmation.
+    if (settings.autoAcceptHighConfidence &&
+        processed.draft!.level == ConfidenceLevel.high) {
+      await confirmCurrent(processed.draft!);
       return;
     }
     state = state.copyWith(phase: IngestQueuePhase.confirm);

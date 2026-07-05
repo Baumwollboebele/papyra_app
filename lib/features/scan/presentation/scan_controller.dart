@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/ingest_providers.dart';
+import '../../../core/providers/settings_providers.dart';
 import '../../../core/services/file_service.dart';
 import '../../../core/services/scanner_service.dart';
+import '../domain/classification/scoring.dart';
 import '../domain/pipeline/scan_models.dart';
 
 final scanControllerProvider = NotifierProvider<ScanController, ScanState>(
@@ -85,17 +87,28 @@ class ScanController extends Notifier<ScanState> {
       phase: ScanPhase.processing,
       progressLabel: 'Text wird erkannt …',
     );
+    final settings = ref.read(settingsControllerProvider);
     final ingest = ref.read(ingestServiceProvider);
     final item = ingest.cameraItem(
       state.pages.map((p) => p.imagePath).toList(),
     );
-    final processed = await ingest.process(item);
+    final processed = await ingest.process(
+      item,
+      titleTemplate: settings.titleTemplate,
+    );
     state = state.copyWith(
-      phase: ScanPhase.confirm,
       item: processed,
       classification: processed.classification,
       draft: processed.draft,
     );
+
+    // Auto-accept high-confidence documents without the confirmation screen.
+    if (settings.autoAcceptHighConfidence &&
+        processed.draft?.level == ConfidenceLevel.high) {
+      await save();
+      return;
+    }
+    state = state.copyWith(phase: ScanPhase.confirm);
   }
 
   void updateDraft(ConfirmationDraft draft) {

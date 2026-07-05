@@ -55,6 +55,12 @@ Tables (see `core/database/`):
 - **tags** — `id, name(unique)`.
 - **document_tags** — `documentId, tagId` (m:n).
 - **documents_fts** — FTS5 virtual table over `title, sender, ocrText, tags`. Kept in sync from the repository layer (insert/update/delete mirror writes) so the search index always matches the row. FTS row ids equal document ids.
+- **groups** — user sub-groups within a category (`id, categoryId, name, sortOrder`); documents carry a nullable `groupId` (schema v2).
+- **sender_categories** — on-device learning (`senderNorm PK, categoryKey, updatedAt`): remembers which category a sender was filed under to boost future classification (schema v3). Never leaves the device.
+
+### Smart filing (confidence, titles, learning)
+
+`domain/classification/scoring.dart` derives a `ConfidenceLevel` (high/medium/low) from the classifier confidence and hosts the pure learning **boost** (`boostForLearnedSender`) and alternative-suggestion helpers. `title_generator.dart` builds titles from a configurable template (`{sender} – {docType} – {date}`). The pipeline (`scan_processing.dart`) combines these: a learned sender boosts its category; the title is pre-filled; high confidence can auto-accept (setting, default off); medium/low surface a "please check" badge + one-tap alternative-category chips. Learning is recorded on save (`LearningRepository`). All boost/title/confidence logic is pure and unit-tested.
 
 Rationale for repository-driven FTS sync (vs. SQL triggers): the indexed `tags` column aggregates a m:n relation, which is awkward and brittle in triggers; doing it in one place in Dart is clearer and unit-testable.
 

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../classification/models.dart';
+import '../classification/scoring.dart';
 import 'ingest_models.dart';
 
 /// A single captured page inside the scan flow.
@@ -31,6 +32,8 @@ class ConfirmationDraft {
     this.iban,
     this.tags = const [],
     this.groupId,
+    this.level = ConfidenceLevel.low,
+    this.alternativeCategoryIds = const [],
   });
 
   final String title;
@@ -57,6 +60,12 @@ class ConfirmationDraft {
   /// Selected sub-group within [categoryId] (null = none).
   final int? groupId;
 
+  /// Confidence band of the classification (drives the UI badge / flag).
+  final ConfidenceLevel level;
+
+  /// Category ids of the top alternative guesses (one-tap chips).
+  final List<int> alternativeCategoryIds;
+
   ConfirmationDraft copyWith({
     String? title,
     int? categoryId,
@@ -82,6 +91,8 @@ class ConfirmationDraft {
       iban: iban,
       tags: tags ?? this.tags,
       groupId: groupId == _sentinel ? this.groupId : groupId as int?,
+      level: level,
+      alternativeCategoryIds: alternativeCategoryIds,
     );
   }
 

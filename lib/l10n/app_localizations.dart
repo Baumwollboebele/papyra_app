@@ -332,6 +332,30 @@ abstract class AppLocalizations {
   /// **'Kategorie unsicher – bitte prüfen.'**
   String get scanLowConfidence;
 
+  /// No description provided for @confidenceHigh.
+  ///
+  /// In de, this message translates to:
+  /// **'Sicher erkannt'**
+  String get confidenceHigh;
+
+  /// No description provided for @confidenceMedium.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte Kategorie prüfen'**
+  String get confidenceMedium;
+
+  /// No description provided for @confidenceLow.
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie unsicher'**
+  String get confidenceLow;
+
+  /// No description provided for @altCategoriesLabel.
+  ///
+  /// In de, this message translates to:
+  /// **'Passt eher:'**
+  String get altCategoriesLabel;
+
   /// No description provided for @scanSuggested.
   ///
   /// In de, this message translates to:
@@ -781,6 +805,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Dunkel'**
   String get themeDark;
+
+  /// No description provided for @setFiling.
+  ///
+  /// In de, this message translates to:
+  /// **'Erkennung & Titel'**
+  String get setFiling;
+
+  /// No description provided for @setTitleTemplate.
+  ///
+  /// In de, this message translates to:
+  /// **'Titel-Vorlage'**
+  String get setTitleTemplate;
+
+  /// No description provided for @setTitleTemplateHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Platzhalter: sender, docType, date'**
+  String get setTitleTemplateHint;
+
+  /// No description provided for @setTitleTemplateReset.
+  ///
+  /// In de, this message translates to:
+  /// **'Standard wiederherstellen'**
+  String get setTitleTemplateReset;
+
+  /// No description provided for @setAutoAccept.
+  ///
+  /// In de, this message translates to:
+  /// **'Sichere Dokumente automatisch speichern'**
+  String get setAutoAccept;
+
+  /// No description provided for @setAutoAcceptSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Bei hoher Sicherheit die Bestätigung überspringen'**
+  String get setAutoAcceptSubtitle;
 
   /// No description provided for @setData.
   ///

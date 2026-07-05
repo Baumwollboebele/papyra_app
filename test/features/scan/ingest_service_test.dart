@@ -10,6 +10,7 @@ import 'package:paperless/core/database/default_categories.dart';
 import 'package:paperless/core/database/repositories/category_repository.dart';
 import 'package:paperless/core/database/repositories/document_repository.dart';
 import 'package:paperless/core/database/repositories/group_repository.dart';
+import 'package:paperless/core/database/repositories/learning_repository.dart';
 import 'package:paperless/core/services/file_service.dart';
 import 'package:paperless/core/services/ocr_service.dart';
 import 'package:paperless/core/services/pdf_rasterizer.dart';
@@ -64,6 +65,7 @@ void main() {
       categoryRepository: CategoryRepository(db),
       groupRepository: GroupRepository(db),
       documentRepository: docsRepo,
+      learningRepository: LearningRepository(db),
     );
   });
 

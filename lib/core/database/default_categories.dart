@@ -109,6 +109,31 @@ const List<DefaultCategory> kDefaultCategories = [
   ),
 ];
 
+/// German document-type noun per category key, used by the title template
+/// (`{docType}`). Custom/unknown categories fall back to "Dokument".
+String categoryDocType(String key) {
+  switch (key) {
+    case CategoryKeys.rechnungen:
+      return 'Rechnung';
+    case CategoryKeys.lohnGehalt:
+      return 'Abrechnung';
+    case CategoryKeys.steuern:
+      return 'Bescheid';
+    case CategoryKeys.vertraege:
+      return 'Vertrag';
+    case CategoryKeys.versicherungen:
+      return 'Versicherung';
+    case CategoryKeys.bank:
+      return 'Kontoauszug';
+    case CategoryKeys.gesundheit:
+      return 'Befund';
+    case CategoryKeys.behoerden:
+      return 'Bescheid';
+    default:
+      return 'Dokument';
+  }
+}
+
 /// Maps a stored [iconName] to a Material icon. Unknown names fall back to a
 /// generic folder so custom user categories always render.
 IconData categoryIcon(String iconName) {

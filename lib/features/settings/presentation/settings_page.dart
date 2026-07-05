@@ -7,6 +7,7 @@ import '../../../core/providers/database_providers.dart';
 import '../../../core/providers/settings_providers.dart';
 import '../../../core/services/app_lock_service.dart';
 import '../../../core/services/backup_service.dart';
+import '../../../core/services/settings_store.dart';
 import '../../../core/services/share_service.dart';
 import 'category_management_page.dart';
 import 'privacy_page.dart';
@@ -109,6 +110,50 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
+  Future<void> _editTitleTemplate() async {
+    final l10n = context.l10n;
+    final controller = TextEditingController(
+      text: ref.read(settingsControllerProvider).titleTemplate,
+    );
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.setTitleTemplate),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: InputDecoration(hintText: l10n.setTitleTemplateHint),
+            ),
+            const SizedBox(height: 4),
+            TextButton(
+              onPressed: () => controller.text = kDefaultTitleTemplateSetting,
+              child: Text(l10n.setTitleTemplateReset),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(controller.text),
+            child: Text(l10n.commonSave),
+          ),
+        ],
+      ),
+    );
+    if (result != null && result.trim().isNotEmpty) {
+      await ref
+          .read(settingsControllerProvider.notifier)
+          .setTitleTemplate(result.trim());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -156,6 +201,24 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       .read(settingsControllerProvider.notifier)
                       .setThemeMode(s.first),
                 ),
+              ),
+              const Divider(height: 1),
+              _SectionHeader(l10n.setFiling),
+              ListTile(
+                leading: const Icon(Icons.title),
+                title: Text(l10n.setTitleTemplate),
+                subtitle: Text(settings.titleTemplate),
+                trailing: const Icon(Icons.edit_outlined),
+                onTap: _editTitleTemplate,
+              ),
+              SwitchListTile(
+                secondary: const Icon(Icons.bolt_outlined),
+                title: Text(l10n.setAutoAccept),
+                subtitle: Text(l10n.setAutoAcceptSubtitle),
+                value: settings.autoAcceptHighConfidence,
+                onChanged: (v) => ref
+                    .read(settingsControllerProvider.notifier)
+                    .setAutoAcceptHighConfidence(v),
               ),
               const Divider(height: 1),
               _SectionHeader(l10n.setData),

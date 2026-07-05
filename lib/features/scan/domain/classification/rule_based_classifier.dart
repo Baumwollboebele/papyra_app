@@ -3,6 +3,7 @@ import 'category_rules.dart';
 import 'document_classifier.dart';
 import 'metadata_extractor.dart';
 import 'models.dart';
+import 'scoring.dart';
 import 'text_normalizer.dart';
 
 /// German keyword-scoring classifier.
@@ -19,10 +20,6 @@ class RuleBasedClassifier implements DocumentClassifier {
   });
 
   static const double defaultThreshold = 0.35;
-
-  /// Score at/above which absolute evidence is considered "strong" (saturates
-  /// the strength term of the confidence calculation).
-  static const double strongEvidenceScore = 7;
 
   @override
   final double confidenceThreshold;
@@ -63,27 +60,9 @@ class RuleBasedClassifier implements DocumentClassifier {
       scores[CategoryKeys.rechnungen] = scores[CategoryKeys.rechnungen]! + 1;
     }
 
-    final ranked = scores.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    final top = ranked.first;
-    final secondValue = ranked.length > 1 ? ranked[1].value : 0.0;
-
-    if (top.value <= 0) {
-      return ClassificationResult(
-        bestKey: CategoryKeys.sonstiges,
-        confidence: 0,
-        scores: scores,
-      );
-    }
-
-    final strength = (top.value / strongEvidenceScore).clamp(0.0, 1.0);
-    final margin = (top.value - secondValue) / top.value; // 0..1
-    final confidence = (strength * (0.5 + 0.5 * margin)).clamp(0.0, 1.0);
-
-    return ClassificationResult(
-      bestKey: top.key,
-      confidence: confidence,
-      scores: scores,
+    return buildClassificationResult(
+      scores,
+      fallbackKey: CategoryKeys.sonstiges,
     );
   }
 

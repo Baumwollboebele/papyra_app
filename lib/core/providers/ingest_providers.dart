@@ -31,6 +31,7 @@ final ingestServiceProvider = Provider<IngestService>((ref) {
     categoryRepository: ref.watch(categoryRepositoryProvider),
     groupRepository: ref.watch(groupRepositoryProvider),
     documentRepository: ref.watch(documentRepositoryProvider),
+    learningRepository: ref.watch(learningRepositoryProvider),
     fontLoader: _loadInter,
   );
 });

@@ -2294,6 +2294,287 @@ class DocumentTagsCompanion extends UpdateCompanion<DocumentTag> {
   }
 }
 
+class $SenderCategoriesTable extends SenderCategories
+    with TableInfo<$SenderCategoriesTable, SenderCategory> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SenderCategoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _senderNormMeta = const VerificationMeta(
+    'senderNorm',
+  );
+  @override
+  late final GeneratedColumn<String> senderNorm = GeneratedColumn<String>(
+    'sender_norm',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryKeyMeta = const VerificationMeta(
+    'categoryKey',
+  );
+  @override
+  late final GeneratedColumn<String> categoryKey = GeneratedColumn<String>(
+    'category_key',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 64,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [senderNorm, categoryKey, updatedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sender_categories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SenderCategory> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sender_norm')) {
+      context.handle(
+        _senderNormMeta,
+        senderNorm.isAcceptableOrUnknown(data['sender_norm']!, _senderNormMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_senderNormMeta);
+    }
+    if (data.containsKey('category_key')) {
+      context.handle(
+        _categoryKeyMeta,
+        categoryKey.isAcceptableOrUnknown(
+          data['category_key']!,
+          _categoryKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryKeyMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {senderNorm};
+  @override
+  SenderCategory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SenderCategory(
+      senderNorm: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sender_norm'],
+      )!,
+      categoryKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_key'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SenderCategoriesTable createAlias(String alias) {
+    return $SenderCategoriesTable(attachedDatabase, alias);
+  }
+}
+
+class SenderCategory extends DataClass implements Insertable<SenderCategory> {
+  /// Normalized sender text (see text_normalizer).
+  final String senderNorm;
+  final String categoryKey;
+  final DateTime updatedAt;
+  const SenderCategory({
+    required this.senderNorm,
+    required this.categoryKey,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['sender_norm'] = Variable<String>(senderNorm);
+    map['category_key'] = Variable<String>(categoryKey);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  SenderCategoriesCompanion toCompanion(bool nullToAbsent) {
+    return SenderCategoriesCompanion(
+      senderNorm: Value(senderNorm),
+      categoryKey: Value(categoryKey),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SenderCategory.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SenderCategory(
+      senderNorm: serializer.fromJson<String>(json['senderNorm']),
+      categoryKey: serializer.fromJson<String>(json['categoryKey']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'senderNorm': serializer.toJson<String>(senderNorm),
+      'categoryKey': serializer.toJson<String>(categoryKey),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  SenderCategory copyWith({
+    String? senderNorm,
+    String? categoryKey,
+    DateTime? updatedAt,
+  }) => SenderCategory(
+    senderNorm: senderNorm ?? this.senderNorm,
+    categoryKey: categoryKey ?? this.categoryKey,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  SenderCategory copyWithCompanion(SenderCategoriesCompanion data) {
+    return SenderCategory(
+      senderNorm: data.senderNorm.present
+          ? data.senderNorm.value
+          : this.senderNorm,
+      categoryKey: data.categoryKey.present
+          ? data.categoryKey.value
+          : this.categoryKey,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SenderCategory(')
+          ..write('senderNorm: $senderNorm, ')
+          ..write('categoryKey: $categoryKey, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(senderNorm, categoryKey, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SenderCategory &&
+          other.senderNorm == this.senderNorm &&
+          other.categoryKey == this.categoryKey &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SenderCategoriesCompanion extends UpdateCompanion<SenderCategory> {
+  final Value<String> senderNorm;
+  final Value<String> categoryKey;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const SenderCategoriesCompanion({
+    this.senderNorm = const Value.absent(),
+    this.categoryKey = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SenderCategoriesCompanion.insert({
+    required String senderNorm,
+    required String categoryKey,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : senderNorm = Value(senderNorm),
+       categoryKey = Value(categoryKey),
+       updatedAt = Value(updatedAt);
+  static Insertable<SenderCategory> custom({
+    Expression<String>? senderNorm,
+    Expression<String>? categoryKey,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (senderNorm != null) 'sender_norm': senderNorm,
+      if (categoryKey != null) 'category_key': categoryKey,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SenderCategoriesCompanion copyWith({
+    Value<String>? senderNorm,
+    Value<String>? categoryKey,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return SenderCategoriesCompanion(
+      senderNorm: senderNorm ?? this.senderNorm,
+      categoryKey: categoryKey ?? this.categoryKey,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (senderNorm.present) {
+      map['sender_norm'] = Variable<String>(senderNorm.value);
+    }
+    if (categoryKey.present) {
+      map['category_key'] = Variable<String>(categoryKey.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SenderCategoriesCompanion(')
+          ..write('senderNorm: $senderNorm, ')
+          ..write('categoryKey: $categoryKey, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2303,6 +2584,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $DocumentPagesTable documentPages = $DocumentPagesTable(this);
   late final $TagsTable tags = $TagsTable(this);
   late final $DocumentTagsTable documentTags = $DocumentTagsTable(this);
+  late final $SenderCategoriesTable senderCategories = $SenderCategoriesTable(
+    this,
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2314,6 +2598,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     documentPages,
     tags,
     documentTags,
+    senderCategories,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -4775,6 +5060,178 @@ typedef $$DocumentTagsTableProcessedTableManager =
       DocumentTag,
       PrefetchHooks Function({bool documentId, bool tagId})
     >;
+typedef $$SenderCategoriesTableCreateCompanionBuilder =
+    SenderCategoriesCompanion Function({
+      required String senderNorm,
+      required String categoryKey,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$SenderCategoriesTableUpdateCompanionBuilder =
+    SenderCategoriesCompanion Function({
+      Value<String> senderNorm,
+      Value<String> categoryKey,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$SenderCategoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $SenderCategoriesTable> {
+  $$SenderCategoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get senderNorm => $composableBuilder(
+    column: $table.senderNorm,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryKey => $composableBuilder(
+    column: $table.categoryKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SenderCategoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SenderCategoriesTable> {
+  $$SenderCategoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get senderNorm => $composableBuilder(
+    column: $table.senderNorm,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryKey => $composableBuilder(
+    column: $table.categoryKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SenderCategoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SenderCategoriesTable> {
+  $$SenderCategoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get senderNorm => $composableBuilder(
+    column: $table.senderNorm,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get categoryKey => $composableBuilder(
+    column: $table.categoryKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$SenderCategoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SenderCategoriesTable,
+          SenderCategory,
+          $$SenderCategoriesTableFilterComposer,
+          $$SenderCategoriesTableOrderingComposer,
+          $$SenderCategoriesTableAnnotationComposer,
+          $$SenderCategoriesTableCreateCompanionBuilder,
+          $$SenderCategoriesTableUpdateCompanionBuilder,
+          (
+            SenderCategory,
+            BaseReferences<
+              _$AppDatabase,
+              $SenderCategoriesTable,
+              SenderCategory
+            >,
+          ),
+          SenderCategory,
+          PrefetchHooks Function()
+        > {
+  $$SenderCategoriesTableTableManager(
+    _$AppDatabase db,
+    $SenderCategoriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SenderCategoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SenderCategoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SenderCategoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> senderNorm = const Value.absent(),
+                Value<String> categoryKey = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SenderCategoriesCompanion(
+                senderNorm: senderNorm,
+                categoryKey: categoryKey,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String senderNorm,
+                required String categoryKey,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SenderCategoriesCompanion.insert(
+                senderNorm: senderNorm,
+                categoryKey: categoryKey,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SenderCategoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SenderCategoriesTable,
+      SenderCategory,
+      $$SenderCategoriesTableFilterComposer,
+      $$SenderCategoriesTableOrderingComposer,
+      $$SenderCategoriesTableAnnotationComposer,
+      $$SenderCategoriesTableCreateCompanionBuilder,
+      $$SenderCategoriesTableUpdateCompanionBuilder,
+      (
+        SenderCategory,
+        BaseReferences<_$AppDatabase, $SenderCategoriesTable, SenderCategory>,
+      ),
+      SenderCategory,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4790,4 +5247,6 @@ class $AppDatabaseManager {
   $$TagsTableTableManager get tags => $$TagsTableTableManager(_db, _db.tags);
   $$DocumentTagsTableTableManager get documentTags =>
       $$DocumentTagsTableTableManager(_db, _db.documentTags);
+  $$SenderCategoriesTableTableManager get senderCategories =>
+      $$SenderCategoriesTableTableManager(_db, _db.senderCategories);
 }

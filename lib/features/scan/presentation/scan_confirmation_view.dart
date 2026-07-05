@@ -7,6 +7,7 @@ import '../../../core/l10n/l10n_extension.dart';
 import '../../../core/providers/database_providers.dart';
 import '../../../core/widgets/group_picker.dart';
 import '../../../core/widgets/tag_editor.dart';
+import '../domain/classification/scoring.dart';
 import '../domain/pipeline/scan_models.dart';
 
 /// Editable confirmation of the extracted metadata before saving. Reused by the
@@ -139,13 +140,8 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
         data: (categories) => ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 120),
           children: [
-            if (widget.draft.lowConfidence)
-              _LowConfidenceBanner(
-                suggestion: _categoryNameFor(
-                  categories,
-                  widget.draft.suggestedCategoryId,
-                ),
-              ),
+            _ConfidenceBadge(level: widget.draft.level),
+            const SizedBox(height: 12),
             _label(l10n.fieldTitle),
             TextField(controller: _title),
             const SizedBox(height: 16),
@@ -163,6 +159,16 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
                 }
               }),
             ),
+            if (widget.draft.level != ConfidenceLevel.high)
+              _AlternativeCategories(
+                categories: categories,
+                alternativeIds: widget.draft.alternativeCategoryIds,
+                selectedId: _categoryId,
+                onSelect: (id) => setState(() {
+                  _categoryId = id;
+                  _groupId = null;
+                }),
+              ),
             const SizedBox(height: 16),
             _label(l10n.fieldGroup),
             GroupPicker(
@@ -227,51 +233,93 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
     padding: const EdgeInsets.only(bottom: 6, top: 4),
     child: Text(text, style: Theme.of(context).textTheme.labelLarge),
   );
-
-  String _categoryNameFor(List<Category> categories, int id) {
-    return categories
-        .firstWhere((c) => c.id == id, orElse: () => categories.first)
-        .name;
-  }
 }
 
-class _LowConfidenceBanner extends StatelessWidget {
-  const _LowConfidenceBanner({required this.suggestion});
-  final String suggestion;
+/// Visual confidence indicator for the classification.
+class _ConfidenceBadge extends StatelessWidget {
+  const _ConfidenceBadge({required this.level});
+  final ConfidenceLevel level;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final l10n = context.l10n;
+    final (bg, fg, icon, text) = switch (level) {
+      ConfidenceLevel.high => (
+        scheme.primaryContainer,
+        scheme.onPrimaryContainer,
+        Icons.check_circle_outline,
+        l10n.confidenceHigh,
+      ),
+      ConfidenceLevel.medium => (
+        scheme.tertiaryContainer,
+        scheme.onTertiaryContainer,
+        Icons.info_outline,
+        l10n.confidenceMedium,
+      ),
+      ConfidenceLevel.low => (
+        scheme.errorContainer,
+        scheme.onErrorContainer,
+        Icons.help_outline,
+        l10n.confidenceLow,
+      ),
+    };
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: scheme.tertiaryContainer,
+        color: bg,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: [
-          Icon(Icons.help_outline, color: scheme.onTertiaryContainer),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.scanLowConfidence,
-                  style: TextStyle(
-                    color: scheme.onTertiaryContainer,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  l10n.scanSuggested(suggestion),
-                  style: TextStyle(color: scheme.onTertiaryContainer),
-                ),
-              ],
-            ),
+          Icon(icon, color: fg, size: 20),
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: TextStyle(color: fg, fontWeight: FontWeight.w600),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One-tap chips offering the next best category guesses.
+class _AlternativeCategories extends StatelessWidget {
+  const _AlternativeCategories({
+    required this.categories,
+    required this.alternativeIds,
+    required this.selectedId,
+    required this.onSelect,
+  });
+
+  final List<Category> categories;
+  final List<int> alternativeIds;
+  final int selectedId;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final chips = [
+      for (final id in alternativeIds)
+        if (id != selectedId) categories.where((c) => c.id == id).firstOrNull,
+    ].whereType<Category>().toList();
+    if (chips.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          Text(
+            l10n.altCategoriesLabel,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          for (final c in chips)
+            ActionChip(label: Text(c.name), onPressed: () => onSelect(c.id)),
         ],
       ),
     );

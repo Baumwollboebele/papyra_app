@@ -12,7 +12,15 @@ part 'app_database.g.dart';
 /// in sync from the repository layer (see DocumentRepository). Categories are
 /// seeded on first open.
 @DriftDatabase(
-  tables: [Categories, Groups, Documents, DocumentPages, Tags, DocumentTags],
+  tables: [
+    Categories,
+    Groups,
+    Documents,
+    DocumentPages,
+    Tags,
+    DocumentTags,
+    SenderCategories,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(openAppConnection());
@@ -21,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -35,6 +43,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.createTable(groups);
         await m.addColumn(documents, documents.groupId);
+      }
+      // v3: local sender -> category learning.
+      if (from < 3) {
+        await m.createTable(senderCategories);
       }
     },
     beforeOpen: (details) async {

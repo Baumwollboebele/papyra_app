@@ -66,6 +66,18 @@ class Tags extends Table {
   TextColumn get name => text().withLength(min: 1, max: 60).unique()();
 }
 
+/// Local, on-device learning: remembers which category a sender was filed
+/// under, to boost future classification. Never leaves the device.
+class SenderCategories extends Table {
+  /// Normalized sender text (see text_normalizer).
+  TextColumn get senderNorm => text()();
+  TextColumn get categoryKey => text().withLength(min: 1, max: 64)();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column> get primaryKey => {senderNorm};
+}
+
 /// m:n between documents and tags.
 class DocumentTags extends Table {
   IntColumn get documentId =>

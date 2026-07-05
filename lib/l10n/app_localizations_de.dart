@@ -130,6 +130,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get scanLowConfidence => 'Kategorie unsicher – bitte prüfen.';
 
   @override
+  String get confidenceHigh => 'Sicher erkannt';
+
+  @override
+  String get confidenceMedium => 'Bitte Kategorie prüfen';
+
+  @override
+  String get confidenceLow => 'Kategorie unsicher';
+
+  @override
+  String get altCategoriesLabel => 'Passt eher:';
+
+  @override
   String scanSuggested(String category) {
     return 'Vorschlag: $category';
   }
@@ -382,6 +394,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeDark => 'Dunkel';
+
+  @override
+  String get setFiling => 'Erkennung & Titel';
+
+  @override
+  String get setTitleTemplate => 'Titel-Vorlage';
+
+  @override
+  String get setTitleTemplateHint => 'Platzhalter: sender, docType, date';
+
+  @override
+  String get setTitleTemplateReset => 'Standard wiederherstellen';
+
+  @override
+  String get setAutoAccept => 'Sichere Dokumente automatisch speichern';
+
+  @override
+  String get setAutoAcceptSubtitle =>
+      'Bei hoher Sicherheit die Bestätigung überspringen';
 
   @override
   String get setData => 'Daten';

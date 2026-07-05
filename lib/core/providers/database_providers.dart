@@ -4,6 +4,7 @@ import '../database/app_database.dart';
 import '../database/repositories/category_repository.dart';
 import '../database/repositories/document_repository.dart';
 import '../database/repositories/group_repository.dart';
+import '../database/repositories/learning_repository.dart';
 
 export '../database/repositories/document_repository.dart' show DocumentSort;
 
@@ -29,6 +30,10 @@ final documentRepositoryProvider = Provider<DocumentRepository>((ref) {
 
 final groupRepositoryProvider = Provider<GroupRepository>((ref) {
   return GroupRepository(ref.watch(databaseProvider));
+});
+
+final learningRepositoryProvider = Provider<LearningRepository>((ref) {
+  return LearningRepository(ref.watch(databaseProvider));
 });
 
 /// Sub-groups of a category with document counts (reactive).

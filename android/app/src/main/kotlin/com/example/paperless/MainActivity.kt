@@ -1,5 +1,6 @@
 package com.example.paperless
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+// local_auth requires a FragmentActivity for the biometric prompt.
+class MainActivity : FlutterFragmentActivity()

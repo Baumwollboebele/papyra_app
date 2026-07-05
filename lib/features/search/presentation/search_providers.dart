@@ -22,10 +22,12 @@ final searchFiltersProvider =
     );
 
 class SearchFiltersNotifier extends Notifier<SearchFilters> {
+  // Default to "browse everything" so opening search immediately lists all
+  // documents instead of an empty hint screen.
   @override
-  SearchFilters build() => const SearchFilters();
+  SearchFilters build() => const SearchFilters(showAll: true);
   void set(SearchFilters filters) => state = filters;
-  void clear() => state = const SearchFilters();
+  void clear() => state = const SearchFilters(showAll: true);
 }
 
 /// FTS results for the current query + filters, reactive: updates live as

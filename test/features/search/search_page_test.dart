@@ -76,17 +76,18 @@ void main() {
 
   tearDown(() => db.close());
 
-  testWidgets('shows the hint before any query', (tester) async {
-    await tester.pumpWidget(_wrap(db));
-    await tester.pump();
-    expect(find.textContaining('Suche in Titeln'), findsOneWidget);
-  });
-
   Future<void> pumpFrames(WidgetTester tester) async {
     for (var i = 0; i < 6; i++) {
       await tester.pump(const Duration(milliseconds: 120));
     }
   }
+
+  testWidgets('browses all documents by default (no query)', (tester) async {
+    await tester.pumpWidget(_wrap(db));
+    await pumpFrames(tester);
+    // Opening search lists every document straight away, no hint screen.
+    expect(find.byType(DocumentListTile), findsOneWidget);
+  });
 
   testWidgets('typing a query shows matching results', (tester) async {
     await tester.pumpWidget(_wrap(db));

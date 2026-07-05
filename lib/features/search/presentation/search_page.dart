@@ -139,7 +139,7 @@ class _FilterBar extends ConsumerWidget {
           ),
           const SizedBox(width: 8),
           _DateRangeChip(filters: filters),
-          if (!filters.isEmpty) ...[
+          if (filters.hasActiveFilters) ...[
             const SizedBox(width: 8),
             ActionChip(
               avatar: const Icon(Icons.filter_alt_off, size: 18),

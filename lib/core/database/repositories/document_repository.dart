@@ -94,6 +94,12 @@ class SearchFilters {
       dateTo == null &&
       !favoritesOnly &&
       !showAll;
+
+  /// True when a real narrowing filter (category, date range, favorites) is
+  /// active — as opposed to the plain "browse everything" default. Used to
+  /// decide whether to offer a "clear filters" affordance.
+  bool get hasActiveFilters =>
+      categoryId != null || dateFrom != null || dateTo != null || favoritesOnly;
 }
 
 /// All reads/writes for documents, pages and tags, plus FTS synchronization.

@@ -79,6 +79,20 @@ void main() {
     expect(await docs.search('kfz'), hasLength(1));
   });
 
+  test('empty query with showAll returns every document (browse all)',
+      () async {
+    await insertSample(title: 'Rechnung A');
+    await insertSample(title: 'Egal', categoryId: steuernId, tags: []);
+    // No text query, no category -> "Alle Kategorien" browse shows everything.
+    final all = await docs.search(
+      '',
+      filters: const SearchFilters(showAll: true),
+    );
+    expect(all, hasLength(2));
+    // Pristine empty filters still return nothing.
+    expect(await docs.search('', filters: const SearchFilters()), isEmpty);
+  });
+
   test('search honors category and favorite filters', () async {
     final a = await insertSample(title: 'Rechnung A');
     await insertSample(

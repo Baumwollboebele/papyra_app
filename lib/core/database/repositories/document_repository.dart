@@ -76,6 +76,7 @@ class SearchFilters {
     this.dateFrom,
     this.dateTo,
     this.favoritesOnly = false,
+    this.showAll = false,
   });
 
   final int? categoryId;
@@ -83,11 +84,16 @@ class SearchFilters {
   final DateTime? dateTo;
   final bool favoritesOnly;
 
+  /// True when the user explicitly chose "Alle Kategorien" to browse every
+  /// document (distinct from the pristine, untouched state).
+  final bool showAll;
+
   bool get isEmpty =>
       categoryId == null &&
       dateFrom == null &&
       dateTo == null &&
-      !favoritesOnly;
+      !favoritesOnly &&
+      !showAll;
 }
 
 /// All reads/writes for documents, pages and tags, plus FTS synchronization.

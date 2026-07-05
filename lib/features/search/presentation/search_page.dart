@@ -111,6 +111,8 @@ class _FilterBar extends ConsumerWidget {
                     DropdownMenuEntry(value: c.id, label: c.name),
                 ],
                 onSelected: (value) {
+                  // "Alle Kategorien" (null) browses every document instead of
+                  // clearing the search; a specific category filters to it.
                   ref
                       .read(searchFiltersProvider.notifier)
                       .set(
@@ -118,6 +120,7 @@ class _FilterBar extends ConsumerWidget {
                           filters,
                           categoryId: value,
                           clearCategory: value == null,
+                          showAll: value == null,
                         ),
                       );
                 },
@@ -288,11 +291,13 @@ SearchFilters _copyFilters(
   bool? favoritesOnly,
   DateTime? dateFrom,
   DateTime? dateTo,
+  bool? showAll,
 }) {
   return SearchFilters(
     categoryId: clearCategory ? null : (categoryId ?? f.categoryId),
     favoritesOnly: favoritesOnly ?? f.favoritesOnly,
     dateFrom: dateFrom ?? f.dateFrom,
     dateTo: dateTo ?? f.dateTo,
+    showAll: showAll ?? f.showAll,
   );
 }

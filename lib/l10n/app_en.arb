@@ -71,6 +71,28 @@
   "fieldAddTag": "Add tag",
   "fieldOptional": "optional",
   "fieldGroup": "Group",
+  "fieldDueDate": "Due on",
+
+  "navDue": "Due",
+  "dueOverdue": "Overdue",
+  "dueUpcoming": "Upcoming",
+  "duePaidSection": "Paid",
+  "dueEmpty": "No open due dates.",
+  "dueMarkPaid": "Mark as paid",
+  "dueMarkUnpaid": "Mark as unpaid",
+  "dueToday": "Due today",
+  "dueInDays": "in {days, plural, =1{1 day} other{{days} days}}",
+  "dueDaysAgo": "{days, plural, =1{1 day ago} other{{days} days ago}}",
+  "calendarExport": "Add to calendar",
+  "calendarSummary": "Due: {title}",
+  "calendarError": "Calendar export failed.",
+
+  "setReminders": "Reminders",
+  "setReminderEnabled": "Due-date reminders",
+  "setReminderEnabledSubtitle": "Remind me about invoice payment deadlines",
+  "setReminderLead": "Lead time: {days, plural, =0{on the due date} =1{1 day before} other{{days} days before}}",
+  "setReminderOnDue": "Also remind on the due date",
+  "reminderPermissionDenied": "Notifications are disabled. Please allow them in system settings.",
 
   "groupNone": "None",
   "groupAll": "All",
@@ -165,7 +187,7 @@
   "catCannotDelete": "Only empty, custom categories can be deleted.",
 
   "privacyHeadline": "Your documents never leave your device.",
-  "privacyBody": "Papyra is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.",
+  "privacyBody": "Papyra is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.\n\nDue-date reminders are scheduled entirely locally on your device (notifications). No data is transmitted.",
   "privacyVersion": "Version {version}",
 
   "categoryRechnungen": "Invoices",

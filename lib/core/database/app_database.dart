@@ -29,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -47,6 +47,11 @@ class AppDatabase extends _$AppDatabase {
       // v3: local sender -> category learning.
       if (from < 3) {
         await m.createTable(senderCategories);
+      }
+      // v4: invoice due-date reminders.
+      if (from < 4) {
+        await m.addColumn(documents, documents.dueDate);
+        await m.addColumn(documents, documents.isPaid);
       }
     },
     beforeOpen: (details) async {

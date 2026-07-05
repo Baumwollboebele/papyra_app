@@ -45,6 +45,7 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
 
   late int _categoryId;
   DateTime? _date;
+  DateTime? _dueDate;
   late List<String> _tags;
   int? _groupId;
 
@@ -53,6 +54,7 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
     super.initState();
     final d = widget.draft;
     _groupId = d.groupId;
+    _dueDate = d.dueDate;
     _title = TextEditingController(text: d.title);
     _sender = TextEditingController(text: d.sender ?? '');
     _amount = TextEditingController(
@@ -102,11 +104,23 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
         categoryId: _categoryId,
         sender: _sender.text.trim().isEmpty ? null : _sender.text.trim(),
         documentDate: _date,
+        dueDate: _dueDate,
         amountCents: parseAmountToCents(_amount.text),
         tags: _tags,
         groupId: _groupId,
       ),
     );
+  }
+
+  Future<void> _pickDueDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dueDate ?? _date ?? now,
+      firstDate: DateTime(1990),
+      lastDate: DateTime(now.year + 5),
+    );
+    if (picked != null) setState(() => _dueDate = picked);
   }
 
   @override
@@ -200,6 +214,33 @@ class _ScanConfirmationViewState extends ConsumerState<ScanConfirmationView> {
                 decimal: true,
               ),
               decoration: const InputDecoration(hintText: '0,00 €'),
+            ),
+            const SizedBox(height: 16),
+            _label('${l10n.fieldDueDate} (${l10n.fieldOptional})'),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _pickDueDate,
+                    icon: const Icon(Icons.event_available_outlined),
+                    label: Text(
+                      _dueDate == null
+                          ? l10n.fieldNoDate
+                          : formatDate(_dueDate!),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(52),
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ),
+                ),
+                if (_dueDate != null)
+                  IconButton(
+                    tooltip: l10n.commonDelete,
+                    icon: const Icon(Icons.clear),
+                    onPressed: () => setState(() => _dueDate = null),
+                  ),
+              ],
             ),
             const SizedBox(height: 16),
             _label(l10n.fieldTags),

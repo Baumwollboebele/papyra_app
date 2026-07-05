@@ -271,6 +271,7 @@ class IngestService {
           thumbnailPath: thumbPath,
           sender: draft.sender,
           documentDate: draft.documentDate,
+          dueDate: draft.dueDate,
           amountCents: draft.amountCents,
           currency: draft.currency,
           ocrText: item.pageTexts.join('\n\n'),

@@ -5,6 +5,7 @@ abstract final class AppRoutes {
   static const onboarding = '/onboarding';
 
   static const library = '/';
+  static const due = '/due';
   static const search = '/search';
   static const settings = '/settings';
 

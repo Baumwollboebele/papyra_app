@@ -46,7 +46,7 @@ class BackupService {
 
   /// Mirrors [AppDatabase.schemaVersion]; recorded in the manifest so a future
   /// version can detect and migrate older backups.
-  static const int schemaVersion = 3;
+  static const int schemaVersion = 4;
 
   static const _dbFileName = 'papyra.sqlite';
   static const _mediaDirName = 'papyra';

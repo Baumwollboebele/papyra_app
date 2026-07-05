@@ -10,6 +10,7 @@ import '../../../core/formatting/formatters.dart';
 import '../../../core/l10n/l10n_extension.dart';
 import '../../../core/providers/database_providers.dart';
 import '../../../core/services/file_service.dart';
+import '../../../core/services/reminder_service.dart';
 import '../../../core/services/share_service.dart';
 import '../../../core/widgets/skeletons.dart';
 import 'document_edit_page.dart';
@@ -160,6 +161,7 @@ class _DetailViewState extends ConsumerState<_DetailView> {
       ),
     );
     if (confirmed != true) return;
+    await ref.read(reminderServiceProvider).cancel(_doc.id);
     final files = await ref
         .read(documentRepositoryProvider)
         .deleteDocument(_doc.id);
@@ -388,6 +390,15 @@ class _MetadataCard extends StatelessWidget {
                 Icons.euro_outlined,
                 l10n.fieldAmount,
                 formatAmount(doc.amountCents!, currency: doc.currency),
+              ),
+            if (doc.dueDate != null)
+              _row(
+                context,
+                Icons.event_available_outlined,
+                l10n.fieldDueDate,
+                doc.isPaid
+                    ? '${formatDate(doc.dueDate!)} · ${l10n.duePaidSection}'
+                    : formatDate(doc.dueDate!),
               ),
             if (detail.tags.isNotEmpty) ...[
               const SizedBox(height: 12),

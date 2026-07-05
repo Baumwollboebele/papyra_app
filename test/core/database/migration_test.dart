@@ -13,7 +13,7 @@ import 'package:sqlite3/sqlite3.dart';
 
 void main() {
   test(
-    'v2 → v3 migration adds learning table and keeps existing data',
+    'v2 → v4 migration adds new tables/columns and keeps existing data',
     () async {
       final dir = Directory.systemTemp.createTempSync('migr');
       final file = File(p.join(dir.path, 'papyra.sqlite'));
@@ -38,13 +38,16 @@ void main() {
       );
       await db.close();
 
-      // 2. Make the file look like a v2 database: no learning table, version 2.
+      // 2. Make the file look like a v2 database: drop the v3 learning table and
+      //    the v4 due-date columns, then set the version back to 2.
       final raw = sqlite3.open(file.path);
       raw.execute('DROP TABLE sender_categories');
+      raw.execute('ALTER TABLE documents DROP COLUMN due_date');
+      raw.execute('ALTER TABLE documents DROP COLUMN is_paid');
       raw.execute('PRAGMA user_version = 2');
       raw.close();
 
-      // 3. Reopen — the v2 → v3 upgrade runs.
+      // 3. Reopen — the v2 → v4 upgrade runs.
       db = AppDatabase.forTesting(NativeDatabase(file));
       final docs = await DocumentRepository(db).watchRecent().first;
 
@@ -63,6 +66,13 @@ void main() {
       expect(
         await learning.lookup('Stadtwerke München'),
         CategoryKeys.rechnungen,
+      );
+
+      // The new due-date columns exist and work.
+      await DocumentRepository(db).setPaid(docId, true);
+      expect(
+        (await DocumentRepository(db).getDetail(docId))!.document.isPaid,
+        isTrue,
       );
 
       await db.close();

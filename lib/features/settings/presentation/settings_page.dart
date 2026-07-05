@@ -7,6 +7,7 @@ import '../../../core/providers/database_providers.dart';
 import '../../../core/providers/settings_providers.dart';
 import '../../../core/services/app_lock_service.dart';
 import '../../../core/services/backup_service.dart';
+import '../../../core/services/reminder_service.dart';
 import '../../../core/services/settings_store.dart';
 import '../../../core/services/share_service.dart';
 import 'category_management_page.dart';
@@ -108,6 +109,60 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   void _open(Widget page) {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  }
+
+  Future<void> _toggleReminders(bool enabled) async {
+    final l10n = context.l10n;
+    final messenger = ScaffoldMessenger.of(context);
+    final controller = ref.read(settingsControllerProvider.notifier);
+    if (enabled) {
+      final granted = await ref
+          .read(reminderServiceProvider)
+          .requestPermission();
+      await controller.setReminderEnabled(true);
+      if (!granted) {
+        messenger.showSnackBar(
+          SnackBar(content: Text(l10n.reminderPermissionDenied)),
+        );
+      }
+    } else {
+      await controller.setReminderEnabled(false);
+    }
+  }
+
+  Future<void> _pickReminderLead() async {
+    final l10n = context.l10n;
+    final current = ref.read(settingsControllerProvider).reminderLeadDays;
+    final result = await showDialog<int>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(l10n.setReminders),
+        children: [
+          for (final days in const [0, 1, 2, 3, 5, 7, 14])
+            SimpleDialogOption(
+              onPressed: () => Navigator.of(context).pop(days),
+              child: Row(
+                children: [
+                  Icon(
+                    days == current
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(l10n.setReminderLead(days)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+    if (result != null) {
+      await ref
+          .read(settingsControllerProvider.notifier)
+          .setReminderLeadDays(result);
+    }
   }
 
   Future<void> _editTitleTemplate() async {
@@ -220,6 +275,31 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     .read(settingsControllerProvider.notifier)
                     .setAutoAcceptHighConfidence(v),
               ),
+              const Divider(height: 1),
+              _SectionHeader(l10n.setReminders),
+              SwitchListTile(
+                secondary: const Icon(Icons.notifications_outlined),
+                title: Text(l10n.setReminderEnabled),
+                subtitle: Text(l10n.setReminderEnabledSubtitle),
+                value: settings.reminderEnabled,
+                onChanged: _toggleReminders,
+              ),
+              if (settings.reminderEnabled) ...[
+                ListTile(
+                  leading: const Icon(Icons.schedule),
+                  title: Text(l10n.setReminderLead(settings.reminderLeadDays)),
+                  trailing: const Icon(Icons.edit_outlined),
+                  onTap: _pickReminderLead,
+                ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.event_available_outlined),
+                  title: Text(l10n.setReminderOnDue),
+                  value: settings.reminderOnDueDate,
+                  onChanged: (v) => ref
+                      .read(settingsControllerProvider.notifier)
+                      .setReminderOnDueDate(v),
+                ),
+              ],
               const Divider(height: 1),
               _SectionHeader(l10n.setData),
               ListTile(

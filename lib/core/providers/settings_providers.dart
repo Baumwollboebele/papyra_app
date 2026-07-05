@@ -42,4 +42,13 @@ class SettingsController extends Notifier<AppSettings> {
 
   Future<void> setAutoAcceptHighConfidence(bool value) =>
       _persist(state.copyWith(autoAcceptHighConfidence: value));
+
+  Future<void> setReminderEnabled(bool value) =>
+      _persist(state.copyWith(reminderEnabled: value));
+
+  Future<void> setReminderLeadDays(int days) =>
+      _persist(state.copyWith(reminderLeadDays: days));
+
+  Future<void> setReminderOnDueDate(bool value) =>
+      _persist(state.copyWith(reminderOnDueDate: value));
 }

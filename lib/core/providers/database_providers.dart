@@ -67,6 +67,11 @@ final recentDocumentsProvider = StreamProvider((ref) {
   return ref.watch(documentRepositoryProvider).watchRecent();
 });
 
+/// Documents that have a due date (reactive) — used by the "Fällig" view.
+final dueDocumentsProvider = StreamProvider((ref) {
+  return ref.watch(documentRepositoryProvider).watchWithDueDate();
+});
+
 typedef CategoryDocsQuery = ({
   int categoryId,
   DocumentSort sort,

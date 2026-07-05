@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/library/presentation/category_page.dart';
 import '../../features/library/presentation/document_detail_page.dart';
+import '../../features/due/presentation/due_page.dart';
 import '../../features/library/presentation/library_home_page.dart';
 import '../../features/onboarding/presentation/onboarding_page.dart';
 import '../../features/scan/presentation/ingest_flow_page.dart';
@@ -65,6 +66,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     ),
                   ),
                 ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.due,
+                builder: (context, state) => const DuePage(),
               ),
             ],
           ),

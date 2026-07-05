@@ -219,6 +219,95 @@ class AppLocalizationsDe extends AppLocalizations {
   String get fieldGroup => 'Gruppe';
 
   @override
+  String get fieldDueDate => 'Fällig am';
+
+  @override
+  String get navDue => 'Fällig';
+
+  @override
+  String get dueOverdue => 'Überfällig';
+
+  @override
+  String get dueUpcoming => 'Demnächst';
+
+  @override
+  String get duePaidSection => 'Bezahlt';
+
+  @override
+  String get dueEmpty => 'Keine offenen Fälligkeiten.';
+
+  @override
+  String get dueMarkPaid => 'Als bezahlt markieren';
+
+  @override
+  String get dueMarkUnpaid => 'Als offen markieren';
+
+  @override
+  String get dueToday => 'Heute fällig';
+
+  @override
+  String dueInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days Tagen',
+      one: '1 Tag',
+    );
+    return 'in $_temp0';
+  }
+
+  @override
+  String dueDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days Tagen',
+      one: '1 Tag',
+    );
+    return 'vor $_temp0';
+  }
+
+  @override
+  String get calendarExport => 'Zum Kalender hinzufügen';
+
+  @override
+  String calendarSummary(String title) {
+    return 'Fällig: $title';
+  }
+
+  @override
+  String get calendarError => 'Kalender-Export nicht möglich.';
+
+  @override
+  String get setReminders => 'Erinnerungen';
+
+  @override
+  String get setReminderEnabled => 'Fälligkeits-Erinnerungen';
+
+  @override
+  String get setReminderEnabledSubtitle =>
+      'Bei Rechnungen an die Zahlungsfrist erinnern';
+
+  @override
+  String setReminderLead(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days Tage vorher',
+      one: '1 Tag vorher',
+      zero: 'am Fälligkeitstag',
+    );
+    return 'Vorlauf: $_temp0';
+  }
+
+  @override
+  String get setReminderOnDue => 'Auch am Fälligkeitstag erinnern';
+
+  @override
+  String get reminderPermissionDenied =>
+      'Benachrichtigungen sind deaktiviert. Bitte erlaube sie in den System-Einstellungen.';
+
+  @override
   String get groupNone => 'Keine';
 
   @override
@@ -493,7 +582,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Papyra ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.';
+      'Papyra ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.\n\nFälligkeits-Erinnerungen werden ausschließlich lokal auf deinem Gerät geplant (Benachrichtigungen). Es werden dabei keinerlei Daten übertragen.';
 
   @override
   String privacyVersion(String version) {

@@ -66,6 +66,47 @@ void main() {
     });
   });
 
+  group('due date', () {
+    test('reads an explicit "zahlbar bis" date', () {
+      expect(
+        ex.extractDueDate('Betrag 89,90 €. Zahlbar bis 26.03.2026.'),
+        DateTime(2026, 3, 26),
+      );
+    });
+
+    test('reads "fällig am" with a German month name', () {
+      expect(
+        ex.extractDueDate('Rechnung fällig am 15. April 2026'),
+        DateTime(2026, 4, 15),
+      );
+    });
+
+    test('computes a due date from a payment term', () {
+      expect(
+        ex.extractDueDate(
+          'Zahlbar innerhalb 14 Tagen',
+          documentDate: DateTime(2026, 3, 1),
+        ),
+        DateTime(2026, 3, 15),
+      );
+      expect(
+        ex.extractDueDate(
+          'Zahlungsziel: 30 Tage',
+          documentDate: DateTime(2026, 1, 10),
+        ),
+        DateTime(2026, 2, 9),
+      );
+    });
+
+    test('a payment term without a document date yields null', () {
+      expect(ex.extractDueDate('zahlbar innerhalb 14 Tagen'), isNull);
+    });
+
+    test('returns null when there is no due cue', () {
+      expect(ex.extractDueDate('Rechnungsdatum: 12.03.2026'), isNull);
+    });
+  });
+
   group('IBAN', () {
     test('extracts and validates a real-format German IBAN', () {
       // Valid mod-97 example IBAN.

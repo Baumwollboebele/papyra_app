@@ -837,6 +837,30 @@ class $DocumentsTable extends Documents
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _dueDateMeta = const VerificationMeta(
+    'dueDate',
+  );
+  @override
+  late final GeneratedColumn<DateTime> dueDate = GeneratedColumn<DateTime>(
+    'due_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isPaidMeta = const VerificationMeta('isPaid');
+  @override
+  late final GeneratedColumn<bool> isPaid = GeneratedColumn<bool>(
+    'is_paid',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_paid" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -941,6 +965,8 @@ class $DocumentsTable extends Documents
     groupId,
     sender,
     documentDate,
+    dueDate,
+    isPaid,
     createdAt,
     amountCents,
     currency,
@@ -1000,6 +1026,18 @@ class $DocumentsTable extends Documents
           data['document_date']!,
           _documentDateMeta,
         ),
+      );
+    }
+    if (data.containsKey('due_date')) {
+      context.handle(
+        _dueDateMeta,
+        dueDate.isAcceptableOrUnknown(data['due_date']!, _dueDateMeta),
+      );
+    }
+    if (data.containsKey('is_paid')) {
+      context.handle(
+        _isPaidMeta,
+        isPaid.isAcceptableOrUnknown(data['is_paid']!, _isPaidMeta),
       );
     }
     if (data.containsKey('created_at')) {
@@ -1093,6 +1131,14 @@ class $DocumentsTable extends Documents
         DriftSqlType.dateTime,
         data['${effectivePrefix}document_date'],
       ),
+      dueDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}due_date'],
+      ),
+      isPaid: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_paid'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -1143,6 +1189,12 @@ class Document extends DataClass implements Insertable<Document> {
   final int? groupId;
   final String? sender;
   final DateTime? documentDate;
+
+  /// Payment due date for invoice-type documents (schema v4).
+  final DateTime? dueDate;
+
+  /// Whether an invoice has been marked as paid (clears its reminders).
+  final bool isPaid;
   final DateTime createdAt;
   final int? amountCents;
   final String currency;
@@ -1158,6 +1210,8 @@ class Document extends DataClass implements Insertable<Document> {
     this.groupId,
     this.sender,
     this.documentDate,
+    this.dueDate,
+    required this.isPaid,
     required this.createdAt,
     this.amountCents,
     required this.currency,
@@ -1182,6 +1236,10 @@ class Document extends DataClass implements Insertable<Document> {
     if (!nullToAbsent || documentDate != null) {
       map['document_date'] = Variable<DateTime>(documentDate);
     }
+    if (!nullToAbsent || dueDate != null) {
+      map['due_date'] = Variable<DateTime>(dueDate);
+    }
+    map['is_paid'] = Variable<bool>(isPaid);
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || amountCents != null) {
       map['amount_cents'] = Variable<int>(amountCents);
@@ -1211,6 +1269,10 @@ class Document extends DataClass implements Insertable<Document> {
       documentDate: documentDate == null && nullToAbsent
           ? const Value.absent()
           : Value(documentDate),
+      dueDate: dueDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dueDate),
+      isPaid: Value(isPaid),
       createdAt: Value(createdAt),
       amountCents: amountCents == null && nullToAbsent
           ? const Value.absent()
@@ -1238,6 +1300,8 @@ class Document extends DataClass implements Insertable<Document> {
       groupId: serializer.fromJson<int?>(json['groupId']),
       sender: serializer.fromJson<String?>(json['sender']),
       documentDate: serializer.fromJson<DateTime?>(json['documentDate']),
+      dueDate: serializer.fromJson<DateTime?>(json['dueDate']),
+      isPaid: serializer.fromJson<bool>(json['isPaid']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       amountCents: serializer.fromJson<int?>(json['amountCents']),
       currency: serializer.fromJson<String>(json['currency']),
@@ -1258,6 +1322,8 @@ class Document extends DataClass implements Insertable<Document> {
       'groupId': serializer.toJson<int?>(groupId),
       'sender': serializer.toJson<String?>(sender),
       'documentDate': serializer.toJson<DateTime?>(documentDate),
+      'dueDate': serializer.toJson<DateTime?>(dueDate),
+      'isPaid': serializer.toJson<bool>(isPaid),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'amountCents': serializer.toJson<int?>(amountCents),
       'currency': serializer.toJson<String>(currency),
@@ -1276,6 +1342,8 @@ class Document extends DataClass implements Insertable<Document> {
     Value<int?> groupId = const Value.absent(),
     Value<String?> sender = const Value.absent(),
     Value<DateTime?> documentDate = const Value.absent(),
+    Value<DateTime?> dueDate = const Value.absent(),
+    bool? isPaid,
     DateTime? createdAt,
     Value<int?> amountCents = const Value.absent(),
     String? currency,
@@ -1291,6 +1359,8 @@ class Document extends DataClass implements Insertable<Document> {
     groupId: groupId.present ? groupId.value : this.groupId,
     sender: sender.present ? sender.value : this.sender,
     documentDate: documentDate.present ? documentDate.value : this.documentDate,
+    dueDate: dueDate.present ? dueDate.value : this.dueDate,
+    isPaid: isPaid ?? this.isPaid,
     createdAt: createdAt ?? this.createdAt,
     amountCents: amountCents.present ? amountCents.value : this.amountCents,
     currency: currency ?? this.currency,
@@ -1314,6 +1384,8 @@ class Document extends DataClass implements Insertable<Document> {
       documentDate: data.documentDate.present
           ? data.documentDate.value
           : this.documentDate,
+      dueDate: data.dueDate.present ? data.dueDate.value : this.dueDate,
+      isPaid: data.isPaid.present ? data.isPaid.value : this.isPaid,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       amountCents: data.amountCents.present
           ? data.amountCents.value
@@ -1340,6 +1412,8 @@ class Document extends DataClass implements Insertable<Document> {
           ..write('groupId: $groupId, ')
           ..write('sender: $sender, ')
           ..write('documentDate: $documentDate, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('isPaid: $isPaid, ')
           ..write('createdAt: $createdAt, ')
           ..write('amountCents: $amountCents, ')
           ..write('currency: $currency, ')
@@ -1360,6 +1434,8 @@ class Document extends DataClass implements Insertable<Document> {
     groupId,
     sender,
     documentDate,
+    dueDate,
+    isPaid,
     createdAt,
     amountCents,
     currency,
@@ -1379,6 +1455,8 @@ class Document extends DataClass implements Insertable<Document> {
           other.groupId == this.groupId &&
           other.sender == this.sender &&
           other.documentDate == this.documentDate &&
+          other.dueDate == this.dueDate &&
+          other.isPaid == this.isPaid &&
           other.createdAt == this.createdAt &&
           other.amountCents == this.amountCents &&
           other.currency == this.currency &&
@@ -1396,6 +1474,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
   final Value<int?> groupId;
   final Value<String?> sender;
   final Value<DateTime?> documentDate;
+  final Value<DateTime?> dueDate;
+  final Value<bool> isPaid;
   final Value<DateTime> createdAt;
   final Value<int?> amountCents;
   final Value<String> currency;
@@ -1411,6 +1491,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.groupId = const Value.absent(),
     this.sender = const Value.absent(),
     this.documentDate = const Value.absent(),
+    this.dueDate = const Value.absent(),
+    this.isPaid = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.amountCents = const Value.absent(),
     this.currency = const Value.absent(),
@@ -1427,6 +1509,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.groupId = const Value.absent(),
     this.sender = const Value.absent(),
     this.documentDate = const Value.absent(),
+    this.dueDate = const Value.absent(),
+    this.isPaid = const Value.absent(),
     required DateTime createdAt,
     this.amountCents = const Value.absent(),
     this.currency = const Value.absent(),
@@ -1446,6 +1530,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Expression<int>? groupId,
     Expression<String>? sender,
     Expression<DateTime>? documentDate,
+    Expression<DateTime>? dueDate,
+    Expression<bool>? isPaid,
     Expression<DateTime>? createdAt,
     Expression<int>? amountCents,
     Expression<String>? currency,
@@ -1462,6 +1548,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       if (groupId != null) 'group_id': groupId,
       if (sender != null) 'sender': sender,
       if (documentDate != null) 'document_date': documentDate,
+      if (dueDate != null) 'due_date': dueDate,
+      if (isPaid != null) 'is_paid': isPaid,
       if (createdAt != null) 'created_at': createdAt,
       if (amountCents != null) 'amount_cents': amountCents,
       if (currency != null) 'currency': currency,
@@ -1480,6 +1568,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Value<int?>? groupId,
     Value<String?>? sender,
     Value<DateTime?>? documentDate,
+    Value<DateTime?>? dueDate,
+    Value<bool>? isPaid,
     Value<DateTime>? createdAt,
     Value<int?>? amountCents,
     Value<String>? currency,
@@ -1496,6 +1586,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       groupId: groupId ?? this.groupId,
       sender: sender ?? this.sender,
       documentDate: documentDate ?? this.documentDate,
+      dueDate: dueDate ?? this.dueDate,
+      isPaid: isPaid ?? this.isPaid,
       createdAt: createdAt ?? this.createdAt,
       amountCents: amountCents ?? this.amountCents,
       currency: currency ?? this.currency,
@@ -1527,6 +1619,12 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     }
     if (documentDate.present) {
       map['document_date'] = Variable<DateTime>(documentDate.value);
+    }
+    if (dueDate.present) {
+      map['due_date'] = Variable<DateTime>(dueDate.value);
+    }
+    if (isPaid.present) {
+      map['is_paid'] = Variable<bool>(isPaid.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1564,6 +1662,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
           ..write('groupId: $groupId, ')
           ..write('sender: $sender, ')
           ..write('documentDate: $documentDate, ')
+          ..write('dueDate: $dueDate, ')
+          ..write('isPaid: $isPaid, ')
           ..write('createdAt: $createdAt, ')
           ..write('amountCents: $amountCents, ')
           ..write('currency: $currency, ')
@@ -3440,6 +3540,8 @@ typedef $$DocumentsTableCreateCompanionBuilder =
       Value<int?> groupId,
       Value<String?> sender,
       Value<DateTime?> documentDate,
+      Value<DateTime?> dueDate,
+      Value<bool> isPaid,
       required DateTime createdAt,
       Value<int?> amountCents,
       Value<String> currency,
@@ -3457,6 +3559,8 @@ typedef $$DocumentsTableUpdateCompanionBuilder =
       Value<int?> groupId,
       Value<String?> sender,
       Value<DateTime?> documentDate,
+      Value<DateTime?> dueDate,
+      Value<bool> isPaid,
       Value<DateTime> createdAt,
       Value<int?> amountCents,
       Value<String> currency,
@@ -3568,6 +3672,16 @@ class $$DocumentsTableFilterComposer
 
   ColumnFilters<DateTime> get documentDate => $composableBuilder(
     column: $table.documentDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isPaid => $composableBuilder(
+    column: $table.isPaid,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3737,6 +3851,16 @@ class $$DocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get dueDate => $composableBuilder(
+    column: $table.dueDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isPaid => $composableBuilder(
+    column: $table.isPaid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -3846,6 +3970,12 @@ class $$DocumentsTableAnnotationComposer
     column: $table.documentDate,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get dueDate =>
+      $composableBuilder(column: $table.dueDate, builder: (column) => column);
+
+  GeneratedColumn<bool> get isPaid =>
+      $composableBuilder(column: $table.isPaid, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -4013,6 +4143,8 @@ class $$DocumentsTableTableManager
                 Value<int?> groupId = const Value.absent(),
                 Value<String?> sender = const Value.absent(),
                 Value<DateTime?> documentDate = const Value.absent(),
+                Value<DateTime?> dueDate = const Value.absent(),
+                Value<bool> isPaid = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int?> amountCents = const Value.absent(),
                 Value<String> currency = const Value.absent(),
@@ -4028,6 +4160,8 @@ class $$DocumentsTableTableManager
                 groupId: groupId,
                 sender: sender,
                 documentDate: documentDate,
+                dueDate: dueDate,
+                isPaid: isPaid,
                 createdAt: createdAt,
                 amountCents: amountCents,
                 currency: currency,
@@ -4045,6 +4179,8 @@ class $$DocumentsTableTableManager
                 Value<int?> groupId = const Value.absent(),
                 Value<String?> sender = const Value.absent(),
                 Value<DateTime?> documentDate = const Value.absent(),
+                Value<DateTime?> dueDate = const Value.absent(),
+                Value<bool> isPaid = const Value.absent(),
                 required DateTime createdAt,
                 Value<int?> amountCents = const Value.absent(),
                 Value<String> currency = const Value.absent(),
@@ -4060,6 +4196,8 @@ class $$DocumentsTableTableManager
                 groupId: groupId,
                 sender: sender,
                 documentDate: documentDate,
+                dueDate: dueDate,
+                isPaid: isPaid,
                 createdAt: createdAt,
                 amountCents: amountCents,
                 currency: currency,

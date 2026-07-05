@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/ingest_providers.dart';
 import '../../../core/providers/settings_providers.dart';
 import '../../../core/services/file_service.dart';
+import '../../../core/services/reminder_service.dart';
 import '../domain/classification/scoring.dart';
 import '../domain/pipeline/ingest_models.dart';
 import '../domain/pipeline/scan_models.dart';
@@ -92,6 +93,14 @@ class IngestQueueController extends Notifier<IngestQueueState> {
     );
     try {
       final id = await ref.read(ingestServiceProvider).persist(item, draft);
+      await applyReminder(
+        service: ref.read(reminderServiceProvider),
+        settings: ref.read(settingsControllerProvider),
+        documentId: id,
+        title: draft.title,
+        dueDate: draft.dueDate,
+        isPaid: false,
+      );
       _replace(
         index,
         item.copyWith(status: IngestStatus.saved, savedDocumentId: id),

@@ -27,6 +27,7 @@ class ConfirmationDraft {
     required this.lowConfidence,
     this.sender,
     this.documentDate,
+    this.dueDate,
     this.amountCents,
     this.currency = 'EUR',
     this.iban,
@@ -52,6 +53,7 @@ class ConfirmationDraft {
 
   final String? sender;
   final DateTime? documentDate;
+  final DateTime? dueDate;
   final int? amountCents;
   final String currency;
   final String? iban;
@@ -71,6 +73,7 @@ class ConfirmationDraft {
     int? categoryId,
     String? sender,
     DateTime? documentDate,
+    Object? dueDate = _sentinel,
     Object? amountCents = _sentinel,
     String? currency,
     List<String>? tags,
@@ -84,6 +87,7 @@ class ConfirmationDraft {
       lowConfidence: lowConfidence,
       sender: sender ?? this.sender,
       documentDate: documentDate ?? this.documentDate,
+      dueDate: dueDate == _sentinel ? this.dueDate : dueDate as DateTime?,
       amountCents: amountCents == _sentinel
           ? this.amountCents
           : amountCents as int?,

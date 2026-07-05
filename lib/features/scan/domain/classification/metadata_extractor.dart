@@ -58,15 +58,94 @@ class MetadataExtractor {
     'endbetrag',
   ];
 
+  /// German cues that introduce a payment due date.
+  static const _dueDateCues = [
+    'zahlbar bis zum',
+    'zahlbar bis',
+    'fällig am',
+    'fällig bis',
+    'faellig am',
+    'faellig bis',
+    'zahlungsziel',
+    'bitte überweisen sie bis',
+    'bitte ueberweisen sie bis',
+    'zu zahlen bis',
+    'zahlung bis',
+  ];
+
+  static final _paymentTerm = RegExp(
+    r'(?:innerhalb(?:\s+von)?|zahlungsziel[:\s]*|zahlbar\s+innerhalb(?:\s+von)?)'
+    r'\s*(\d{1,3})\s*tag',
+    caseSensitive: false,
+  );
+
   ExtractedMetadata extract(String text) {
     final sender = extractSender(text);
+    final documentDate = extractPrimaryDate(text);
     return ExtractedMetadata(
       sender: sender,
-      documentDate: extractPrimaryDate(text),
+      documentDate: documentDate,
+      dueDate: extractDueDate(text, documentDate: documentDate),
       amountCents: extractPrimaryAmountCents(text),
       iban: extractIban(text),
       titleSuggestion: sender,
     );
+  }
+
+  /// Detects a payment **due date** from German invoice cues ("zahlbar bis",
+  /// "fällig am", "Zahlungsziel"), or computes it from a term
+  /// ("zahlbar innerhalb 14 Tagen") relative to [documentDate].
+  DateTime? extractDueDate(String text, {DateTime? documentDate}) {
+    final lower = text.toLowerCase();
+
+    // 1. An explicit date shortly after a due cue.
+    for (final cue in _dueDateCues) {
+      var idx = lower.indexOf(cue);
+      while (idx >= 0) {
+        final start = idx + cue.length;
+        final end = (start + 40).clamp(0, text.length);
+        final date = _firstDateIn(text.substring(start, end));
+        if (date != null) return date;
+        idx = lower.indexOf(cue, idx + cue.length);
+      }
+    }
+
+    // 2. A payment term relative to the document date.
+    if (documentDate != null) {
+      final m = _paymentTerm.firstMatch(text);
+      if (m != null) {
+        final days = int.tryParse(m.group(1)!);
+        if (days != null && days > 0 && days <= 365) {
+          return documentDate.add(Duration(days: days));
+        }
+      }
+    }
+    return null;
+  }
+
+  DateTime? _firstDateIn(String window) {
+    _Positioned<DateTime>? best;
+    for (final m in _numericDate.allMatches(window)) {
+      final d = _buildDate(
+        int.parse(m.group(1)!),
+        int.parse(m.group(2)!),
+        _normalizeYear(int.parse(m.group(3)!)),
+      );
+      if (d != null && (best == null || m.start < best.position)) {
+        best = _Positioned(d, m.start);
+      }
+    }
+    for (final m in _wordDate.allMatches(window)) {
+      final d = _buildDate(
+        int.parse(m.group(1)!),
+        _monthNames[m.group(2)!.toLowerCase()]!,
+        int.parse(m.group(3)!),
+      );
+      if (d != null && (best == null || m.start < best.position)) {
+        best = _Positioned(d, m.start);
+      }
+    }
+    return best?.value;
   }
 
   // --- Dates -----------------------------------------------------------------

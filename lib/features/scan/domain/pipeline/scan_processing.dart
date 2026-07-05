@@ -71,6 +71,7 @@ ProcessingResult buildProcessingResult({
     alternativeCategoryIds: alternativeIds,
     sender: metadata.sender,
     documentDate: metadata.documentDate,
+    dueDate: metadata.dueDate,
     amountCents: metadata.amountCents,
     currency: metadata.currency,
     iban: metadata.iban,

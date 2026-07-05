@@ -219,6 +219,95 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fieldGroup => 'Group';
 
   @override
+  String get fieldDueDate => 'Due on';
+
+  @override
+  String get navDue => 'Due';
+
+  @override
+  String get dueOverdue => 'Overdue';
+
+  @override
+  String get dueUpcoming => 'Upcoming';
+
+  @override
+  String get duePaidSection => 'Paid';
+
+  @override
+  String get dueEmpty => 'No open due dates.';
+
+  @override
+  String get dueMarkPaid => 'Mark as paid';
+
+  @override
+  String get dueMarkUnpaid => 'Mark as unpaid';
+
+  @override
+  String get dueToday => 'Due today';
+
+  @override
+  String dueInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'in $_temp0';
+  }
+
+  @override
+  String dueDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calendarExport => 'Add to calendar';
+
+  @override
+  String calendarSummary(String title) {
+    return 'Due: $title';
+  }
+
+  @override
+  String get calendarError => 'Calendar export failed.';
+
+  @override
+  String get setReminders => 'Reminders';
+
+  @override
+  String get setReminderEnabled => 'Due-date reminders';
+
+  @override
+  String get setReminderEnabledSubtitle =>
+      'Remind me about invoice payment deadlines';
+
+  @override
+  String setReminderLead(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days before',
+      one: '1 day before',
+      zero: 'on the due date',
+    );
+    return 'Lead time: $_temp0';
+  }
+
+  @override
+  String get setReminderOnDue => 'Also remind on the due date';
+
+  @override
+  String get reminderPermissionDenied =>
+      'Notifications are disabled. Please allow them in system settings.';
+
+  @override
   String get groupNone => 'None';
 
   @override
@@ -489,7 +578,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyBody =>
-      'Papyra is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.';
+      'Papyra is 100% offline. There is no server, no account and no cloud. Your scans, the recognized text and all metadata are stored only locally on your device.\n\nWe collect no data, use no analytics or tracking, and show no ads. The app requests no internet permission — technically your documents cannot leave your device.\n\nText recognition (OCR) and automatic filing run entirely on your device. For a backup you can export your data yourself as a ZIP file; where it is saved is entirely up to you.\n\nDue-date reminders are scheduled entirely locally on your device (notifications). No data is transmitted.';
 
   @override
   String privacyVersion(String version) {

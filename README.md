@@ -126,6 +126,7 @@ Set in `android/app/build.gradle.kts` (`minSdk = 24`) and the iOS deployment tar
 
 - **Camera** (`android.permission.CAMERA`, `NSCameraUsageDescription`): scanning documents. Rationale strings are localized (de/en).
 - **Face ID** (`NSFaceIDUsageDescription`): optional app lock.
+- **Notifications** (`POST_NOTIFICATIONS`, Android 13+): local due-date reminders only (scheduled on-device, no network). `RECEIVE_BOOT_COMPLETED` re-schedules them after a reboot.
 - **No internet permission** — intentionally removed on Android; not requested on iOS.
 
 ---

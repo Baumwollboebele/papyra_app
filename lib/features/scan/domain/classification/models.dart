@@ -29,6 +29,7 @@ abstract class ExtractedMetadata with _$ExtractedMetadata {
   const factory ExtractedMetadata({
     String? sender,
     DateTime? documentDate,
+    DateTime? dueDate,
     int? amountCents,
     @Default('EUR') String currency,
     String? iban,

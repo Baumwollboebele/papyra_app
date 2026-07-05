@@ -40,6 +40,12 @@ class Documents extends Table {
   )();
   TextColumn get sender => text().nullable()();
   DateTimeColumn get documentDate => dateTime().nullable()();
+
+  /// Payment due date for invoice-type documents (schema v4).
+  DateTimeColumn get dueDate => dateTime().nullable()();
+
+  /// Whether an invoice has been marked as paid (clears its reminders).
+  BoolColumn get isPaid => boolean().withDefault(const Constant(false))();
   DateTimeColumn get createdAt => dateTime()();
   IntColumn get amountCents => integer().nullable()();
   TextColumn get currency =>

@@ -12,6 +12,7 @@ class DocumentDraft {
     this.thumbnailPath,
     this.sender,
     this.documentDate,
+    this.dueDate,
     this.amountCents,
     this.currency = 'EUR',
     this.ocrText = '',
@@ -26,6 +27,7 @@ class DocumentDraft {
   final String? thumbnailPath;
   final String? sender;
   final DateTime? documentDate;
+  final DateTime? dueDate;
   final int? amountCents;
   final String currency;
   final String ocrText;
@@ -203,6 +205,7 @@ class DocumentRepository {
               categoryId: draft.categoryId,
               sender: Value(draft.sender),
               documentDate: Value(draft.documentDate),
+              dueDate: Value(draft.dueDate),
               createdAt: DateTime.now(),
               amountCents: Value(draft.amountCents),
               currency: Value(draft.currency),
@@ -244,6 +247,7 @@ class DocumentRepository {
     required int categoryId,
     String? sender,
     DateTime? documentDate,
+    DateTime? dueDate,
     int? amountCents,
     String? currency,
     int? groupId,
@@ -255,6 +259,7 @@ class DocumentRepository {
           categoryId: Value(categoryId),
           sender: Value(sender),
           documentDate: Value(documentDate),
+          dueDate: Value(dueDate),
           amountCents: Value(amountCents),
           currency: currency == null ? const Value.absent() : Value(currency),
           groupId: Value(groupId),
@@ -262,6 +267,22 @@ class DocumentRepository {
       );
       await _reindex(id);
     });
+  }
+
+  /// Marks a document paid/unpaid (paid documents clear their reminders).
+  Future<void> setPaid(int id, bool value) {
+    return (_db.update(_db.documents)..where((d) => d.id.equals(id))).write(
+      DocumentsCompanion(isPaid: Value(value)),
+    );
+  }
+
+  /// Documents that have a due date, newest deadlines last. Used by the
+  /// "Fällig" view; the UI splits into overdue / upcoming and hides paid ones.
+  Stream<List<Document>> watchWithDueDate() {
+    return (_db.select(_db.documents)
+          ..where((d) => d.dueDate.isNotNull())
+          ..orderBy([(d) => OrderingTerm.asc(d.dueDate)]))
+        .watch();
   }
 
   /// Moves to another category and clears the sub-group (groups are per-category).

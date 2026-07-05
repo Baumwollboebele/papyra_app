@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/ingest_providers.dart';
 import '../../../core/providers/settings_providers.dart';
 import '../../../core/services/file_service.dart';
+import '../../../core/services/reminder_service.dart';
 import '../../../core/services/scanner_service.dart';
 import '../domain/classification/scoring.dart';
 import '../domain/pipeline/scan_models.dart';
@@ -127,6 +128,14 @@ class ScanController extends Notifier<ScanState> {
     );
     try {
       final id = await ref.read(ingestServiceProvider).persist(item, draft);
+      await applyReminder(
+        service: ref.read(reminderServiceProvider),
+        settings: ref.read(settingsControllerProvider),
+        documentId: id,
+        title: draft.title,
+        dueDate: draft.dueDate,
+        isPaid: false,
+      );
       state = state.copyWith(phase: ScanPhase.saved, savedDocumentId: id);
     } on StorageException catch (e) {
       _fail('Nicht genügend Speicherplatz oder Schreibfehler: ${e.message}');

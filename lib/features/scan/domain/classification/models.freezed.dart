@@ -283,7 +283,7 @@ as Map<String, double>,
 /// @nodoc
 mixin _$ExtractedMetadata {
 
- String? get sender; DateTime? get documentDate; int? get amountCents; String get currency; String? get iban; String? get titleSuggestion;
+ String? get sender; DateTime? get documentDate; DateTime? get dueDate; int? get amountCents; String get currency; String? get iban; String? get titleSuggestion;
 /// Create a copy of ExtractedMetadata
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -294,16 +294,16 @@ $ExtractedMetadataCopyWith<ExtractedMetadata> get copyWith => _$ExtractedMetadat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExtractedMetadata&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.documentDate, documentDate) || other.documentDate == documentDate)&&(identical(other.amountCents, amountCents) || other.amountCents == amountCents)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban)&&(identical(other.titleSuggestion, titleSuggestion) || other.titleSuggestion == titleSuggestion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExtractedMetadata&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.documentDate, documentDate) || other.documentDate == documentDate)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.amountCents, amountCents) || other.amountCents == amountCents)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban)&&(identical(other.titleSuggestion, titleSuggestion) || other.titleSuggestion == titleSuggestion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,sender,documentDate,amountCents,currency,iban,titleSuggestion);
+int get hashCode => Object.hash(runtimeType,sender,documentDate,dueDate,amountCents,currency,iban,titleSuggestion);
 
 @override
 String toString() {
-  return 'ExtractedMetadata(sender: $sender, documentDate: $documentDate, amountCents: $amountCents, currency: $currency, iban: $iban, titleSuggestion: $titleSuggestion)';
+  return 'ExtractedMetadata(sender: $sender, documentDate: $documentDate, dueDate: $dueDate, amountCents: $amountCents, currency: $currency, iban: $iban, titleSuggestion: $titleSuggestion)';
 }
 
 
@@ -314,7 +314,7 @@ abstract mixin class $ExtractedMetadataCopyWith<$Res>  {
   factory $ExtractedMetadataCopyWith(ExtractedMetadata value, $Res Function(ExtractedMetadata) _then) = _$ExtractedMetadataCopyWithImpl;
 @useResult
 $Res call({
- String? sender, DateTime? documentDate, int? amountCents, String currency, String? iban, String? titleSuggestion
+ String? sender, DateTime? documentDate, DateTime? dueDate, int? amountCents, String currency, String? iban, String? titleSuggestion
 });
 
 
@@ -331,10 +331,11 @@ class _$ExtractedMetadataCopyWithImpl<$Res>
 
 /// Create a copy of ExtractedMetadata
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? sender = freezed,Object? documentDate = freezed,Object? amountCents = freezed,Object? currency = null,Object? iban = freezed,Object? titleSuggestion = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? sender = freezed,Object? documentDate = freezed,Object? dueDate = freezed,Object? amountCents = freezed,Object? currency = null,Object? iban = freezed,Object? titleSuggestion = freezed,}) {
   return _then(_self.copyWith(
 sender: freezed == sender ? _self.sender : sender // ignore: cast_nullable_to_non_nullable
 as String?,documentDate: freezed == documentDate ? _self.documentDate : documentDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,amountCents: freezed == amountCents ? _self.amountCents : amountCents // ignore: cast_nullable_to_non_nullable
 as int?,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String,iban: freezed == iban ? _self.iban : iban // ignore: cast_nullable_to_non_nullable
@@ -424,10 +425,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? sender,  DateTime? documentDate,  int? amountCents,  String currency,  String? iban,  String? titleSuggestion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? sender,  DateTime? documentDate,  DateTime? dueDate,  int? amountCents,  String currency,  String? iban,  String? titleSuggestion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ExtractedMetadata() when $default != null:
-return $default(_that.sender,_that.documentDate,_that.amountCents,_that.currency,_that.iban,_that.titleSuggestion);case _:
+return $default(_that.sender,_that.documentDate,_that.dueDate,_that.amountCents,_that.currency,_that.iban,_that.titleSuggestion);case _:
   return orElse();
 
 }
@@ -445,10 +446,10 @@ return $default(_that.sender,_that.documentDate,_that.amountCents,_that.currency
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? sender,  DateTime? documentDate,  int? amountCents,  String currency,  String? iban,  String? titleSuggestion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? sender,  DateTime? documentDate,  DateTime? dueDate,  int? amountCents,  String currency,  String? iban,  String? titleSuggestion)  $default,) {final _that = this;
 switch (_that) {
 case _ExtractedMetadata():
-return $default(_that.sender,_that.documentDate,_that.amountCents,_that.currency,_that.iban,_that.titleSuggestion);case _:
+return $default(_that.sender,_that.documentDate,_that.dueDate,_that.amountCents,_that.currency,_that.iban,_that.titleSuggestion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -465,10 +466,10 @@ return $default(_that.sender,_that.documentDate,_that.amountCents,_that.currency
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? sender,  DateTime? documentDate,  int? amountCents,  String currency,  String? iban,  String? titleSuggestion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? sender,  DateTime? documentDate,  DateTime? dueDate,  int? amountCents,  String currency,  String? iban,  String? titleSuggestion)?  $default,) {final _that = this;
 switch (_that) {
 case _ExtractedMetadata() when $default != null:
-return $default(_that.sender,_that.documentDate,_that.amountCents,_that.currency,_that.iban,_that.titleSuggestion);case _:
+return $default(_that.sender,_that.documentDate,_that.dueDate,_that.amountCents,_that.currency,_that.iban,_that.titleSuggestion);case _:
   return null;
 
 }
@@ -480,11 +481,12 @@ return $default(_that.sender,_that.documentDate,_that.amountCents,_that.currency
 
 
 class _ExtractedMetadata implements ExtractedMetadata {
-  const _ExtractedMetadata({this.sender, this.documentDate, this.amountCents, this.currency = 'EUR', this.iban, this.titleSuggestion});
+  const _ExtractedMetadata({this.sender, this.documentDate, this.dueDate, this.amountCents, this.currency = 'EUR', this.iban, this.titleSuggestion});
   
 
 @override final  String? sender;
 @override final  DateTime? documentDate;
+@override final  DateTime? dueDate;
 @override final  int? amountCents;
 @override@JsonKey() final  String currency;
 @override final  String? iban;
@@ -500,16 +502,16 @@ _$ExtractedMetadataCopyWith<_ExtractedMetadata> get copyWith => __$ExtractedMeta
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExtractedMetadata&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.documentDate, documentDate) || other.documentDate == documentDate)&&(identical(other.amountCents, amountCents) || other.amountCents == amountCents)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban)&&(identical(other.titleSuggestion, titleSuggestion) || other.titleSuggestion == titleSuggestion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExtractedMetadata&&(identical(other.sender, sender) || other.sender == sender)&&(identical(other.documentDate, documentDate) || other.documentDate == documentDate)&&(identical(other.dueDate, dueDate) || other.dueDate == dueDate)&&(identical(other.amountCents, amountCents) || other.amountCents == amountCents)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.iban, iban) || other.iban == iban)&&(identical(other.titleSuggestion, titleSuggestion) || other.titleSuggestion == titleSuggestion));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,sender,documentDate,amountCents,currency,iban,titleSuggestion);
+int get hashCode => Object.hash(runtimeType,sender,documentDate,dueDate,amountCents,currency,iban,titleSuggestion);
 
 @override
 String toString() {
-  return 'ExtractedMetadata(sender: $sender, documentDate: $documentDate, amountCents: $amountCents, currency: $currency, iban: $iban, titleSuggestion: $titleSuggestion)';
+  return 'ExtractedMetadata(sender: $sender, documentDate: $documentDate, dueDate: $dueDate, amountCents: $amountCents, currency: $currency, iban: $iban, titleSuggestion: $titleSuggestion)';
 }
 
 
@@ -520,7 +522,7 @@ abstract mixin class _$ExtractedMetadataCopyWith<$Res> implements $ExtractedMeta
   factory _$ExtractedMetadataCopyWith(_ExtractedMetadata value, $Res Function(_ExtractedMetadata) _then) = __$ExtractedMetadataCopyWithImpl;
 @override @useResult
 $Res call({
- String? sender, DateTime? documentDate, int? amountCents, String currency, String? iban, String? titleSuggestion
+ String? sender, DateTime? documentDate, DateTime? dueDate, int? amountCents, String currency, String? iban, String? titleSuggestion
 });
 
 
@@ -537,10 +539,11 @@ class __$ExtractedMetadataCopyWithImpl<$Res>
 
 /// Create a copy of ExtractedMetadata
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? sender = freezed,Object? documentDate = freezed,Object? amountCents = freezed,Object? currency = null,Object? iban = freezed,Object? titleSuggestion = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? sender = freezed,Object? documentDate = freezed,Object? dueDate = freezed,Object? amountCents = freezed,Object? currency = null,Object? iban = freezed,Object? titleSuggestion = freezed,}) {
   return _then(_ExtractedMetadata(
 sender: freezed == sender ? _self.sender : sender // ignore: cast_nullable_to_non_nullable
 as String?,documentDate: freezed == documentDate ? _self.documentDate : documentDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,dueDate: freezed == dueDate ? _self.dueDate : dueDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,amountCents: freezed == amountCents ? _self.amountCents : amountCents // ignore: cast_nullable_to_non_nullable
 as int?,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String,iban: freezed == iban ? _self.iban : iban // ignore: cast_nullable_to_non_nullable

@@ -482,6 +482,126 @@ abstract class AppLocalizations {
   /// **'Gruppe'**
   String get fieldGroup;
 
+  /// No description provided for @fieldDueDate.
+  ///
+  /// In de, this message translates to:
+  /// **'Fällig am'**
+  String get fieldDueDate;
+
+  /// No description provided for @navDue.
+  ///
+  /// In de, this message translates to:
+  /// **'Fällig'**
+  String get navDue;
+
+  /// No description provided for @dueOverdue.
+  ///
+  /// In de, this message translates to:
+  /// **'Überfällig'**
+  String get dueOverdue;
+
+  /// No description provided for @dueUpcoming.
+  ///
+  /// In de, this message translates to:
+  /// **'Demnächst'**
+  String get dueUpcoming;
+
+  /// No description provided for @duePaidSection.
+  ///
+  /// In de, this message translates to:
+  /// **'Bezahlt'**
+  String get duePaidSection;
+
+  /// No description provided for @dueEmpty.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine offenen Fälligkeiten.'**
+  String get dueEmpty;
+
+  /// No description provided for @dueMarkPaid.
+  ///
+  /// In de, this message translates to:
+  /// **'Als bezahlt markieren'**
+  String get dueMarkPaid;
+
+  /// No description provided for @dueMarkUnpaid.
+  ///
+  /// In de, this message translates to:
+  /// **'Als offen markieren'**
+  String get dueMarkUnpaid;
+
+  /// No description provided for @dueToday.
+  ///
+  /// In de, this message translates to:
+  /// **'Heute fällig'**
+  String get dueToday;
+
+  /// No description provided for @dueInDays.
+  ///
+  /// In de, this message translates to:
+  /// **'in {days, plural, =1{1 Tag} other{{days} Tagen}}'**
+  String dueInDays(int days);
+
+  /// No description provided for @dueDaysAgo.
+  ///
+  /// In de, this message translates to:
+  /// **'vor {days, plural, =1{1 Tag} other{{days} Tagen}}'**
+  String dueDaysAgo(int days);
+
+  /// No description provided for @calendarExport.
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Kalender hinzufügen'**
+  String get calendarExport;
+
+  /// No description provided for @calendarSummary.
+  ///
+  /// In de, this message translates to:
+  /// **'Fällig: {title}'**
+  String calendarSummary(String title);
+
+  /// No description provided for @calendarError.
+  ///
+  /// In de, this message translates to:
+  /// **'Kalender-Export nicht möglich.'**
+  String get calendarError;
+
+  /// No description provided for @setReminders.
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerungen'**
+  String get setReminders;
+
+  /// No description provided for @setReminderEnabled.
+  ///
+  /// In de, this message translates to:
+  /// **'Fälligkeits-Erinnerungen'**
+  String get setReminderEnabled;
+
+  /// No description provided for @setReminderEnabledSubtitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Bei Rechnungen an die Zahlungsfrist erinnern'**
+  String get setReminderEnabledSubtitle;
+
+  /// No description provided for @setReminderLead.
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlauf: {days, plural, =0{am Fälligkeitstag} =1{1 Tag vorher} other{{days} Tage vorher}}'**
+  String setReminderLead(int days);
+
+  /// No description provided for @setReminderOnDue.
+  ///
+  /// In de, this message translates to:
+  /// **'Auch am Fälligkeitstag erinnern'**
+  String get setReminderOnDue;
+
+  /// No description provided for @reminderPermissionDenied.
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigungen sind deaktiviert. Bitte erlaube sie in den System-Einstellungen.'**
+  String get reminderPermissionDenied;
+
   /// No description provided for @groupNone.
   ///
   /// In de, this message translates to:
@@ -995,7 +1115,7 @@ abstract class AppLocalizations {
   /// No description provided for @privacyBody.
   ///
   /// In de, this message translates to:
-  /// **'Papyra ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.'**
+  /// **'Papyra ist zu 100 % offline. Es gibt keinen Server, kein Benutzerkonto und keine Cloud. Deine Scans, der erkannte Text und alle Metadaten werden ausschließlich lokal auf deinem Gerät gespeichert.\n\nWir sammeln keine Daten, verwenden keine Analyse- oder Tracking-Dienste und zeigen keine Werbung. Die App fordert keine Internet-Berechtigung an – deine Dokumente können dein Gerät technisch gar nicht verlassen.\n\nDie Texterkennung (OCR) und die automatische Einsortierung laufen vollständig auf deinem Gerät. Für eine Sicherung kannst du deine Daten selbst als verschlüsselbare ZIP-Datei exportieren; wohin sie gespeichert wird, entscheidest ausschließlich du.\n\nFälligkeits-Erinnerungen werden ausschließlich lokal auf deinem Gerät geplant (Benachrichtigungen). Es werden dabei keinerlei Daten übertragen.'**
   String get privacyBody;
 
   /// No description provided for @privacyVersion.

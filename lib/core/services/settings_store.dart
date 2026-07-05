@@ -14,6 +14,9 @@ class AppSettings {
     this.onboardingCompleted = false,
     this.titleTemplate = kDefaultTitleTemplateSetting,
     this.autoAcceptHighConfidence = false,
+    this.reminderEnabled = true,
+    this.reminderLeadDays = 3,
+    this.reminderOnDueDate = false,
   });
 
   final ThemeMode themeMode;
@@ -26,12 +29,24 @@ class AppSettings {
   /// Save high-confidence documents without showing the confirmation screen.
   final bool autoAcceptHighConfidence;
 
+  /// Whether invoice due-date reminders are scheduled.
+  final bool reminderEnabled;
+
+  /// Days before the due date to remind (0 = on the due date only).
+  final int reminderLeadDays;
+
+  /// Also remind on the due date itself.
+  final bool reminderOnDueDate;
+
   AppSettings copyWith({
     ThemeMode? themeMode,
     bool? appLockEnabled,
     bool? onboardingCompleted,
     String? titleTemplate,
     bool? autoAcceptHighConfidence,
+    bool? reminderEnabled,
+    int? reminderLeadDays,
+    bool? reminderOnDueDate,
   }) {
     return AppSettings(
       themeMode: themeMode ?? this.themeMode,
@@ -40,6 +55,9 @@ class AppSettings {
       titleTemplate: titleTemplate ?? this.titleTemplate,
       autoAcceptHighConfidence:
           autoAcceptHighConfidence ?? this.autoAcceptHighConfidence,
+      reminderEnabled: reminderEnabled ?? this.reminderEnabled,
+      reminderLeadDays: reminderLeadDays ?? this.reminderLeadDays,
+      reminderOnDueDate: reminderOnDueDate ?? this.reminderOnDueDate,
     );
   }
 
@@ -50,7 +68,10 @@ class AppSettings {
       other.appLockEnabled == appLockEnabled &&
       other.onboardingCompleted == onboardingCompleted &&
       other.titleTemplate == titleTemplate &&
-      other.autoAcceptHighConfidence == autoAcceptHighConfidence;
+      other.autoAcceptHighConfidence == autoAcceptHighConfidence &&
+      other.reminderEnabled == reminderEnabled &&
+      other.reminderLeadDays == reminderLeadDays &&
+      other.reminderOnDueDate == reminderOnDueDate;
 
   @override
   int get hashCode => Object.hash(
@@ -59,6 +80,9 @@ class AppSettings {
     onboardingCompleted,
     titleTemplate,
     autoAcceptHighConfidence,
+    reminderEnabled,
+    reminderLeadDays,
+    reminderOnDueDate,
   );
 }
 
@@ -80,6 +104,9 @@ class SecureSettingsStore implements SettingsStore {
   static const _kOnboarding = 'settings.onboardingCompleted';
   static const _kTitleTemplate = 'settings.titleTemplate';
   static const _kAutoAccept = 'settings.autoAcceptHighConfidence';
+  static const _kReminderEnabled = 'settings.reminderEnabled';
+  static const _kReminderLeadDays = 'settings.reminderLeadDays';
+  static const _kReminderOnDueDate = 'settings.reminderOnDueDate';
 
   @override
   Future<AppSettings> load() async {
@@ -88,6 +115,9 @@ class SecureSettingsStore implements SettingsStore {
     final onboarding = await _storage.read(key: _kOnboarding);
     final template = await _storage.read(key: _kTitleTemplate);
     final autoAccept = await _storage.read(key: _kAutoAccept);
+    final reminderEnabled = await _storage.read(key: _kReminderEnabled);
+    final leadDays = await _storage.read(key: _kReminderLeadDays);
+    final onDueDate = await _storage.read(key: _kReminderOnDueDate);
     return AppSettings(
       themeMode: _themeFromString(theme),
       appLockEnabled: appLock == 'true',
@@ -96,6 +126,9 @@ class SecureSettingsStore implements SettingsStore {
           ? kDefaultTitleTemplateSetting
           : template,
       autoAcceptHighConfidence: autoAccept == 'true',
+      reminderEnabled: reminderEnabled != 'false',
+      reminderLeadDays: int.tryParse(leadDays ?? '') ?? 3,
+      reminderOnDueDate: onDueDate == 'true',
     );
   }
 
@@ -114,6 +147,18 @@ class SecureSettingsStore implements SettingsStore {
     await _storage.write(
       key: _kAutoAccept,
       value: settings.autoAcceptHighConfidence.toString(),
+    );
+    await _storage.write(
+      key: _kReminderEnabled,
+      value: settings.reminderEnabled.toString(),
+    );
+    await _storage.write(
+      key: _kReminderLeadDays,
+      value: settings.reminderLeadDays.toString(),
+    );
+    await _storage.write(
+      key: _kReminderOnDueDate,
+      value: settings.reminderOnDueDate.toString(),
     );
   }
 
